@@ -22,5 +22,6 @@
         }
       }
     }
-  }
+  },
+  "tsserver.enableJavascript": false
 }

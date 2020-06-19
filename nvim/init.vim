@@ -67,6 +67,7 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'tpope/vim-surround' 
 Plug 'tpope/vim-repeat' 
 Plug 'tpope/vim-commentary' 
+Plug 'vimlab/split-term.vim'
 " Commentary Changes
 autocmd FileType c setlocal commentstring=//\ %s
 
@@ -81,7 +82,6 @@ Plug 'sainnhe/gruvbox-material'
 Plug 'phanviet/vim-monokai-pro'
 Plug 'vim-airline/vim-airline'
 Plug 'flazz/vim-colorschemes'
-Plug '/home/mpaulson/personal/vim-be-good'
 
 call plug#end()
 
@@ -92,10 +92,6 @@ if exists('+termguicolors')
 endif
 let g:gruvbox_invert_selection='0'
 
-Plug 'vimlab/split-term.vim'
-
-" --- The Greatest plugin of all time.  I am not bias
-" let g:vim_be_good_floating = 0
 
 " --- vim go (polyglot) settings.
 let g:go_highlight_build_constraints = 1
@@ -173,13 +169,16 @@ nmap <leader>rr <Plug>(coc-rename)
 nmap <leader>g[ <Plug>(coc-diagnostic-prev)
 nmap <leader>g] <Plug>(coc-diagnostic-next)
 nmap <leader>qf <Plug>(coc-fix-current)
+nmap <silent> <leader>gp <Plug>(coc-diagnostic-prev-error)
+nmap <silent> <leader>gn <Plug>(coc-diagnostic-next-error)
 nnoremap <leader>cr :CocRestart
 
 " Sweet Sweet FuGITive
-nmap <leader>gj :diffget //3<CR>
-nmap <leader>gf :diffget //2<CR>
+nmap <leader>gh :diffget //3<CR>
+nmap <leader>gu :diffget //2<CR>
+nmap <leader>gs :G<CR>
 nmap <leader>gc :Git commit<CR>
-nmap <leader>ga :Gt add --all<CR>
+nmap <leader>ga :Git add --all<CR>
 nmap <leader>gp :Git push<CR>
 nmap <leader>gs :G<CR>
 
@@ -205,9 +204,6 @@ function MakeSession(session)
     execute "qa"
 endfunction
 command! -nargs=1 S call MakeSession(<f-args>)
-
-command V :vert term
-set splitbelow " split all windows below, including the terminal which is where I always want it
 
 set number relativenumber
 

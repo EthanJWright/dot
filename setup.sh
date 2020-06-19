@@ -16,6 +16,7 @@ else
     cd ..
 fi
 
+rm -rf ~/.config/nvim
 cp -r nvim ~/.config/nvim
 
 # Install other dotfiles
