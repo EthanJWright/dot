@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#Kill and remove all docker containers
+function kdock {
+  docker kill $(docker ps -q)
+  docker rm $(docker ps -a -q)
+}

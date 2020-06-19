@@ -1,0 +1,74 @@
+#!/bin/bash
+
+#Quick aliases
+m() { touch $1; open -a MacVim.app $1 ; }
+
+# Navigation to base directories
+alias n='cd ~/.notes'
+alias s='cd ~/.sandbox'
+
+alias v="vim"
+vls() { vim -S ~/.vim/sessions/$1.vim; }
+vs() { ls ~/.vim/sessions; }
+# alias ls="ls -hN --color=auto" # --group-directories-first
+alias grep='grep --color=auto'                                          # Color grep - highlight desired sequence
+alias ccat='highlight --out-format=ansi'                                # Color cat - print file with syntax highlight
+alias mkd='mkdir -pv'                                                   # make a complete path if doesn't exist, print if made
+alias fz='fzf-tmux'                                                     # open fuzzy finder in a new tmux pane
+alias nm='sudo nmap -sn 192.168.1.1/24'                                 # use nmap to scan the common /24 subnet without doing a port scan
+alias x='chmod +x'
+alias cl="clear; ls -alh"
+alias c="clear"
+alias wanip='dig @resolver1.opendns.com ANY myip.opendns.com +short'    # get current WAN ip of machine 
+alias rmswp='find . -type f -name "*.sw[klmnop]" -delete'               # TODO: get comment from wystan
+vm () { text=$(man "$@") && echo "$text" | vim -R +":set ft=man" - ;  } # open man page in vim
+pop() { sed -i '' -e '$ d' $1 ; }  # Remove the last line of a file ( pop ~/.ssn/known_hosts )
+
+# Git Shortcuts
+# If no arg is passed add all, otherwise add argument
+ga() {
+    if [[ -z "$1" ]];then
+        git add --all
+    else
+        git add "$@"
+    fi
+}
+
+gc() { git commit -m "$@" ; } # Example: gc "Updated the comments"
+alias gp='git push'         # This one is pretty straight forward.
+alias gs='git status'
+
+tn() { tmux new -s $1 ; } 
+ta() { tmux a -t $1 ; }   
+ts() { tmux ls ; }        
+
+inst() { 
+    platform='unknown'
+    unamestr=`uname`
+    if [[ "$unamestr" == 'Linux' ]]; then
+        platform='linux'
+    elif [[ "$unamestr" == 'Darwin' ]]; then
+        platform='mac'
+    fi
+
+    if [[ $platform == 'mac' ]]; then
+        brew install $1
+    else
+        sudo apt-get install -y $1
+    fi
+}
+
+#Useful
+alias bot='cd $(dirname $(find . | tail -n 1))'
+alias lsl="ls -ltrh"
+alias ctags='ctags -R --exclude=.git --exclude=log --exclude=node_modules .'
+
+
+#Docker
+alias build="docker-compose build"
+alias up="docker-compose up"
+alias upbuild="docker-compose up --build"
+alias dlogs="docker logs -f"
+
+#AWS ECS
+alias ecslogin="aws ecr get-login --no-include-email --region us-east-1 | bash"

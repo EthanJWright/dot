@@ -23,3 +23,5 @@ nvim
 | CCLS | either `:CocInstall coc-ccls` or use package manager to install ccls |
 | Deno | `:CocInstall coc-tsserver` `:CocInstall coc-deno` `:CocCommand
 deno.types` |
+| Python | `:CocInstall coc-python` maybe update jedi: `sudo pip3 install -U
+jedi` |

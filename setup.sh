@@ -11,3 +11,12 @@ sudo make install
 cd ..
 
 cp -r nvim ~/.config/nvim
+
+# Install other dotfiles
+cp files/bash_profile ~/.bash_profile
+cp files/bashrc ~/.bashrc
+cp files/functions ~/.functions
+cp files/fzf_functions ~/.fzf_functions
+cp files/kitty.conf ~/.kitty.conf
+cp files/public_aliases ~/.public_aliases
+cp files/tmux.conf ~/.tmux.conf
