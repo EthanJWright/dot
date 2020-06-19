@@ -173,13 +173,14 @@ nmap <leader>rr <Plug>(coc-rename)
 nmap <leader>g[ <Plug>(coc-diagnostic-prev)
 nmap <leader>g] <Plug>(coc-diagnostic-next)
 nmap <leader>qf <Plug>(coc-fix-current)
-nmap <silent> <leader>gp <Plug>(coc-diagnostic-prev-error)
-nmap <silent> <leader>gn <Plug>(coc-diagnostic-next-error)
 nnoremap <leader>cr :CocRestart
 
 " Sweet Sweet FuGITive
 nmap <leader>gj :diffget //3<CR>
 nmap <leader>gf :diffget //2<CR>
+command Gco :call Gcommit()
+nmap <leader>ga :Gadd --all<CR>
+nmap <leader>gp :Gpush<CR>
 nmap <leader>gs :G<CR>
 
 fun! TrimWhitespace()
