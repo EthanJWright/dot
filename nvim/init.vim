@@ -180,7 +180,6 @@ nmap <leader>gj :diffget //3<CR>
 nmap <leader>gf :diffget //2<CR>
 command Gco :call Gcommit()
 nmap <leader>ga :Gadd --all<CR>
-nmap <leader>gp :Gpush<CR>
 nmap <leader>gs :G<CR>
 
 fun! TrimWhitespace()
