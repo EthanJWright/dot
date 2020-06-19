@@ -19,7 +19,7 @@ export CLICOLOR=1
 export LSCOLORS=gxfxcxdxbxeggdabagacad
 
 export TERM=screen-256color
-export VISUAL=vim
+export VISUAL=nvim
 export EDITOR="$VISUAL"
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)

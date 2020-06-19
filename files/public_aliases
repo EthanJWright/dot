@@ -7,8 +7,8 @@ m() { touch $1; open -a MacVim.app $1 ; }
 alias n='cd ~/.notes'
 alias s='cd ~/.sandbox'
 
-alias v="vim"
-vls() { vim -S ~/.vim/sessions/$1.vim; }
+alias v="nvim"
+vls() { nvim -S ~/.vim/sessions/$1.vim; }
 vs() { ls ~/.vim/sessions; }
 # alias ls="ls -hN --color=auto" # --group-directories-first
 alias grep='grep --color=auto'                                          # Color grep - highlight desired sequence
@@ -21,7 +21,7 @@ alias cl="clear; ls -alh"
 alias c="clear"
 alias wanip='dig @resolver1.opendns.com ANY myip.opendns.com +short'    # get current WAN ip of machine 
 alias rmswp='find . -type f -name "*.sw[klmnop]" -delete'               # TODO: get comment from wystan
-vm () { text=$(man "$@") && echo "$text" | vim -R +":set ft=man" - ;  } # open man page in vim
+vm () { text=$(man "$@") && echo "$text" | nvim -R +":set ft=man" - ;  } # open man page in vim
 pop() { sed -i '' -e '$ d' $1 ; }  # Remove the last line of a file ( pop ~/.ssn/known_hosts )
 
 # Git Shortcuts

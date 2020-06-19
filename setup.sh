@@ -4,11 +4,17 @@
 curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-git clone https://github.com/neovim/neovim.git
-cd neovim
-make CMAKE_BUILD_TYPE=Release
-sudo make install
-cd ..
+if [ -f "/usr/local/bin/nvim" ] 
+then
+    echo "NeoVim already installed, moving on." 
+else
+    echo "Building NeoVim from source..."
+    git clone https://github.com/neovim/neovim.git
+    cd neovim
+    make CMAKE_BUILD_TYPE=Release
+    sudo make install
+    cd ..
+fi
 
 cp -r nvim ~/.config/nvim
 
