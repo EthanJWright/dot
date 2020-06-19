@@ -178,8 +178,9 @@ nnoremap <leader>cr :CocRestart
 " Sweet Sweet FuGITive
 nmap <leader>gj :diffget //3<CR>
 nmap <leader>gf :diffget //2<CR>
-command Gco :call Gcommit()
-nmap <leader>ga :Gadd --all<CR>
+nmap <leader>gc :Git commit<CR>
+nmap <leader>ga :Gt add --all<CR>
+nmap <leader>gp :Git push<CR>
 nmap <leader>gs :G<CR>
 
 fun! TrimWhitespace()
