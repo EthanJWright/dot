@@ -26,8 +26,6 @@ case "${unameOut}" in
     *)          machine="UNKNOWN:${unameOut}"
 esac
 
-
-
 if rg --help>/dev/null; then
     echo "RG Already installed"
 else
