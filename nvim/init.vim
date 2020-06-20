@@ -85,6 +85,10 @@ Plug 'gruvbox-community/gruvbox'
 Plug 'sainnhe/gruvbox-material'
 Plug 'phanviet/vim-monokai-pro'
 Plug 'vim-airline/vim-airline'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+
 Plug 'flazz/vim-colorschemes'
 
 call plug#end()
@@ -135,6 +139,10 @@ nnoremap <Leader>ps :Rg<SPACE>
 nnoremap <Leader><CR> :so ~/.config/nvim/init.vim<CR>
 nnoremap <Leader>+ :vertical resize +5<CR>
 nnoremap <Leader>- :vertical resize -5<CR>
+nnoremap <Leader>v :vs<CR>
+nnoremap <Leader>h :sp<CR>
+nnoremap <Leader>b :bp<CR>
+nnoremap <Leader>n :bn<CR>
 nnoremap <Leader>rp :resize 100<CR>
 " Goyo plugin makes text more readable when writing prose:
 map <leader>f :Goyo \| set linebreak<CR> \| :set nu rnu<CR>
