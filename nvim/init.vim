@@ -143,6 +143,14 @@ nnoremap <Leader>v :vs<CR>
 nnoremap <Leader>h :sp<CR>
 nnoremap <Leader>b :bp<CR>
 nnoremap <Leader>n :bn<CR>
+
+" Saving and exiting commands
+nnoremap <Leader>w :w<CR>
+nnoremap <Leader>wa :wa<CR>
+nnoremap <Leader>q :q<CR>
+nnoremap <Leader>qq :qa!<CR>
+nnoremap <Leader>wq :qa!<CR>
+
 nnoremap <Leader>rp :resize 100<CR>
 " Goyo plugin makes text more readable when writing prose:
 map <leader>f :Goyo \| set linebreak<CR> \| :set nu rnu<CR>
