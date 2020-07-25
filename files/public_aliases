@@ -41,6 +41,9 @@ alias gs='git status'
 tn() { tmux new -s $1 ; } 
 ta() { tmux a -t $1 ; }   
 ts() { tmux ls ; }        
+tm() {
+    tmux attach-session -t main || tmux new-session -s main
+}
 
 inst() { 
     platform='unknown'
