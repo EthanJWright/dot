@@ -17,7 +17,6 @@ set noswapfile
 set nobackup
 set undodir=~/.vim/undodir
 set undofile
-set incsearch
 set termguicolors
 set scrolloff=8
 
@@ -91,10 +90,10 @@ Plug 'vim-scripts/Tabmerge'
 autocmd FileType c setlocal commentstring=//\ %s
 
 Plug 'tpope/vim-abolish' 
-" Add extra operators to [
-Plug 'tpope/vim-unimpaired' 
-" tmux bidnings for vim
-Plug 'tpope/vim-tbone' 
+Plug 'tpope/vim-unimpaired' " Add extra operators to [
+
+Plug 'tpope/vim-tbone' " tmux bidnings for vim
+Plug 'justinmk/vim-sneak' " jump to 2 char match (sxy)
 
 Plug 'gruvbox-community/gruvbox'
 Plug 'sainnhe/gruvbox-material'
@@ -156,8 +155,9 @@ nnoremap <Leader>ps :Rg<SPACE>
 nnoremap <Leader><CR> :so ~/.config/nvim/init.vim<CR>
 nnoremap <Leader>+ :vertical resize +5<CR>
 nnoremap <Leader>- :vertical resize -5<CR>
-nnoremap <Leader>v :vs<CR>
-nnoremap <Leader>h :sp<CR>
+nnoremap <Leader>vs :vs<CR>
+nnoremap <Leader>sp :sp<CR>
+nnoremap <Leader>h :History:<CR>
 nnoremap <Leader>b :bp<CR>
 nnoremap <Leader>n :bn<CR>
 
@@ -354,9 +354,6 @@ set showcmd
 execute 'set listchars+=tab:' . nr2char(187) . nr2char(183)
 " (Character 187 is a right double-chevron, and 183 a mid-dot.)
 
-" have the mouse enabled all the time:
-" set mouse=a
-
 " don't have files trying to override this .vimrc:
 set nomodeline
 
@@ -371,14 +368,6 @@ set nowrap
 set formatoptions-=t
 set textwidth=79
 
-" get rid of the default style of C comments, and define a style with two stars
-" at the start of `middle' rows which (looks nicer and) avoids asterisks used
-" for bullet lists being treated like C comments; then define a bullet list
-" style for single stars (like already is for hyphens):
-set comments-=s1:/*,mb:*,ex:*/
-set comments+=s:/*,mb:**,ex:*/
-set comments+=fb:*
-
 " treat lines starting with a quote mark as comments (for `Vim' files, such as
 " this very one!), and colons as well so that reformatting usenet messages from
 " `Tin' users works OK:
@@ -391,12 +380,10 @@ set comments+=n::
 " enable filetype detection:
 "filetype on
 
-" recognize anything in my .Postponed directory as a news article, and anything
-" at all with a .txt extension as being human-language text [this clobbers the
+" anything at all with a .txt extension as being human-language text [this clobbers the
 " `help' filetype, but that doesn't seem to prevent help from working
 " properly]:
 augroup filetype
-  autocmd BufNewFile,BufRead */.Postponed/* set filetype=mail
   autocmd BufNewFile,BufRead *.txt set filetype=human
 augroup END
 
@@ -451,29 +438,6 @@ set gdefault
 " wrap in insert mode:
 set whichwrap=h,l,~,[,]
 
-" page down with <Space> (like in `Lynx', `Mutt', `Pine', `Netscape Navigator',
-" `SLRN', `Less', and `More'); page up with - (like in `Lynx', `Mutt', `Pine'),
-" or <BkSpc> (like in `Netscape Navigator'):
-"noremap <Space> <PageDown>
-noremap <BS> <PageUp>
-" [<Space> by default is like l, <BkSpc> like h, and - like k.]
-
-" scroll the window (but leaving the cursor in the same place) by a couple of
-" lines up/down with <Ins>/<Del> (like in `Lynx'):
-noremap <Ins> 2<C-Y>
-noremap <Del> 2<C-E>
-" [<Ins> by default is like i, and <Del> like x.]
-
-" use <F6> to cycle through split windows (and <Shift>+<F6> to cycle backwards,
-" where possible):
-nnoremap <F6> <C-W>w
-nnoremap <S-F6> <C-W>W
-
-" use <Ctrl>+N/<Ctrl>+P to cycle through files:
-nnoremap <C-N> :next<CR>
-nnoremap <C-P> :prev<CR>
-" [<Ctrl>+N by default is like j, and <Ctrl>+P like k.]
-
 " have % bounce between angled brackets, as well as t'other kinds:
 set matchpairs+=<:>
 
@@ -486,11 +450,6 @@ map! <F1> <C-C><F1>
 
 
 " * Keystrokes -- Formatting
-
-" have Q reformat the current paragraph (or selected text if there is any):
-nnoremap Q gqap
-vnoremap Q gq
-
 " have the usual indentation keystrokes still work in visual mode:
 vnoremap <C-T> >
 vnoremap <C-D> <LT>
@@ -521,9 +480,9 @@ nmap <F4> :windo set scb!<CR>
 nnoremap \tl :set invlist list?<CR>
 nmap <F2> \tl
 
-" have \th ("toggle highlight") toggle highlighting of search matches, and
+" have <L>th ("toggle highlight") toggle highlighting of search matches, and
 " report the change:
-nnoremap \th :set invhls hls?<CR>
+nnoremap <Leader>th :set invhls hls?<CR>
 
 
 " * Keystrokes -- Insert Mode
@@ -536,7 +495,6 @@ set backspace=eol,start,indent
 " indentation:
 inoremap <Tab> <C-T>
 inoremap <S-Tab> <C-D>
-" [<Ctrl>+V <Tab> still inserts an actual tab character.]
 
 syntax on
 
@@ -547,7 +505,6 @@ syntax on
 " General
 inoremap ;k "<..>" : <..>,<esc>0f>ca<
 inoremap ;M :vnew \| 0read !
-
 
 " Node & Javascript
 autocmd BufNewFile,BufRead * if match(getline(1),"node") >= 0 | set filetype=javascript | endif
@@ -567,7 +524,6 @@ autocmd FileType python inoremap ;l for i in range(0, <..>):<Enter><..><esc>kt>c
 autocmd FileType python inoremap ;p print(f'<..>')<esc>0t>ca<
 autocmd FileType python inoremap ;m def main(argv):<Enter><..><Enter>pass<Enter><esc>I<Enter><Enter>if __name__ == "__main__":<Enter>main(sys.argv)<esc>5k0f>ca<
 
-
 " C and Cpp
 autocmd BufNewFile,BufRead * if match(getline(1),"*.hpp") >= 0 | set filetype=cpp | endif
 autocmd BufNewFile,BufRead * if match(getline(1),"*.h") >= 0 | set filetype=c | endif
@@ -580,17 +536,11 @@ autocmd FileType c,cpp inoremap ;I  #include <><esc>i
 autocmd FileType cpp inoremap ;p  cout << "<..>" << endl;<esc>0t>ca<
 autocmd FileType c inoremap ;p  printf("<..>\n");<esc>0t>ca<
 
-
 " Skeleton Builders
 autocmd FileType c inoremap ;t  <esc>:-1read $HOME/.vim/skeletons/.skeleton.c<CR>gg/<..><Enter>ca<
 autocmd FileType cpp inoremap ;t  <esc>:-1read $HOME/.vim/skeletons/.skeleton.cpp<CR>gg/<..><Enter>ca<
 autocmd FileType cpp inoremap ;ht  <esc>:-1read $HOME/.vim/skeletons/.skeleton.hpp<CR>gg/<..><Enter>ca<
 autocmd FileType html inoremap ;t  <esc>:-1read $HOME/.vim/skeletons/.skeleton.html<CR>gg/<..><Enter>ca<
-
-
-
-
-
 
 " Reload from place last closed
 if has("autocmd")
@@ -598,54 +548,7 @@ if has("autocmd")
     \| exe "normal! g'\"" | endif
 endif
 
-
 set tags=./tags,tags;$HOME
-
-fun! VTAG() range
-  let oldfile=expand("%:p")
-  vsplit
-  set switchbuf=split
-  try
-    exe "tag ". expand("<cword>")
-    let curfile=expand("%:p")
-    if curfile == oldfile
-        let pos=getpos(".")
-        if &modified
-        " if we have split before:
-        quit
-        endif
-        call setpos('.', pos)
-    endif
-  catch
-      if &modified
-        exec ":q"
-      endif
-  endtry
-endfun
-
-fun! SPLITAG() range
-  let oldfile=expand("%:p")
-  if &modified
-    split
-  endif
-  set switchbuf=split
-  try
-    exe "tag ". expand("<cword>")
-    let curfile=expand("%:p")
-    if curfile == oldfile
-        let pos=getpos(".")
-        if &modified
-        " if we have split before:
-        quit
-        endif
-        call setpos('.', pos)
-    endif
-  catch
-      if &modified
-        exec ":q"
-      endif
-  endtry
-endfun
 
 nmap <C-P> :Files<CR>
 nmap <C-F> :Buffers<CR>
@@ -692,19 +595,6 @@ function! s:get_visual_selection()
     let lines[0] = lines[0][column_start - 1:]
     return join(lines, "\n")
 endfunction
-
-
-fun! MACLOOKUP()
-    :exe 'norm i' . system("wget -qO- \"https://api.macaddress.io/v1?apiKey=at_2d31hlNQAO1PXZVTecL6yoVAxI8IW&output=vendor&search=" . @0 . "\"")
-endfun
-
-fun! FIXNMAP()
-    let @n ='$F F wyf $di(W'
-    :g/Unknown/norm! @n
-endfun
-command NM :call FIXNMAP()
-
-noremap W :call MACLOOKUP()<CR>
 
 command AL :call ALIGN()
 
