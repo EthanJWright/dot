@@ -73,6 +73,8 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat' 
 Plug 'tpope/vim-commentary' 
 Plug 'vimlab/split-term.vim'
+let g:startify_change_to_dir = 0
+
 " Commentary Changes
 autocmd FileType c setlocal commentstring=//\ %s
 
