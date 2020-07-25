@@ -94,6 +94,9 @@ Plug 'tpope/vim-unimpaired' " Add extra operators to [
 
 Plug 'tpope/vim-tbone' " tmux bidnings for vim
 Plug 'justinmk/vim-sneak' " jump to 2 char match (sxy)
+Plug 'unblevable/quick-scope'
+" Trigger a highlight in the appropriate direction when pressing these keys:
+let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 
 Plug 'gruvbox-community/gruvbox'
 Plug 'sainnhe/gruvbox-material'
