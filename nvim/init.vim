@@ -78,7 +78,14 @@ let g:startify_change_to_dir = 0
 let g:startify_bookmarks = [
     \ { 'i' : '~/.config/nvim/init.vim' },
     \ ]
+let g:startify_lists = [
+          \ { 'type': 'files',     'header': ['   Files']            },
+          \ { 'type': 'dir',       'header': ['   Current Directory '. getcwd()] },
+          \ { 'type': 'sessions',  'header': ['   Sessions']       },
+          \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
+          \ ]
 
+Plug 'vim-scripts/Tabmerge'
 
 " Commentary Changes
 autocmd FileType c setlocal commentstring=//\ %s
@@ -140,6 +147,8 @@ let g:vrfr_rg = 'true'
 let g:netrw_banner = 0
 let g:netrw_winsize = 25
 
+nnoremap <Leader>tt :tabnew<CR>:Startify<CR>
+nnoremap <Leader>tm :Tabmerge right<CR>
 nnoremap <leader>phw :h <C-R>=expand("<cword>")<CR><CR>
 nnoremap <leader>u :UndotreeShow<CR>
 nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
