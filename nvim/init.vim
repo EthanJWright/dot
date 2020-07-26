@@ -231,11 +231,18 @@ nnoremap <leader>cr :CocRestart
 " Sweet Sweet FuGITive
 nmap <leader>gh :diffget //3<CR>
 nmap <leader>gu :diffget //2<CR>
+nmap <leader>gdd :Git diff<cr>
+nmap <leader>gds :Gdiffsplit<cr>
 nmap <leader>gs :G<CR>
 nmap <leader>gc :Git commit<CR>
 nmap <leader>ga :Git add --all<CR>
 nmap <leader>gp :Git push<CR>
 nmap <leader>gs :G<CR>
+" Jump though hunks
+nmap <leader>gj <plug>(signify-next-hunk)
+nmap <leader>gk <plug>(signify-prev-hunk)
+nmap <leader>gJ 9999<leader>gJ
+nmap <leader>gK 9999<leader>gk
 
 fun! TrimWhitespace()
     let l:save = winsaveview()
