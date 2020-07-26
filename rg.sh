@@ -28,7 +28,7 @@ else
     elif [ ${machine} == "Mac" ] 
     then
         echo "-----------------------------------------------------------"
-        echo "brew install regrip"
+        echo "brew install ripgrep"
         echo "-----------------------------------------------------------"
     fi
 fi

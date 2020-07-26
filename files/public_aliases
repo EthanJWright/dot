@@ -7,6 +7,8 @@ m() { touch $1; open -a MacVim.app $1 ; }
 alias n='cd ~/.notes'
 alias s='cd ~/.sandbox'
 
+alias wtr='curl wttr.in'
+
 alias v="nvim"
 vls() { nvim -S ~/.vim/sessions/$1.vim; }
 vs() { ls ~/.vim/sessions; }
