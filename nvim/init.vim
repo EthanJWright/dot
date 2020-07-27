@@ -48,10 +48,12 @@ Plug 'sheerun/vim-polyglot'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'jiangmiao/auto-pairs'
-
-Plug 'liuchengxu/vim-which-key'
+Plug 'lervag/vimtex'
+Plug 'xuhdev/vim-latex-live-preview', {'for': 'tex'}
+command TP :LLPStartPreview
 
 " On-demand lazy load
+Plug 'liuchengxu/vim-which-key'
 Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
 nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
 
@@ -182,9 +184,10 @@ nnoremap <Leader>b :bp<CR>
 nnoremap <Leader>n :bn<CR>
 
 " Saving and exiting commands
-nnoremap <Leader>w :w<CR>
+nnoremap <Leader>wn :w<CR>
 nnoremap <Leader>wa :wa<CR>
-nnoremap <Leader>q :q<CR>
+nnoremap <Leader>qn :q<CR> 
+nnoremap <Leader>qa :qa<CR> 
 nnoremap <Leader>qq :qa!<CR>
 nnoremap <Leader>wq :wq<CR>
 
@@ -193,10 +196,6 @@ nnoremap <Leader>rp :resize 100<CR>
 map <leader>f :Goyo \| set linebreak<CR> \| :set nu rnu<CR>
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
-
-" Vim with me
-nnoremap <leader>vwm :colorscheme gruvbox<bar>:set background=dark<CR>
-nmap <leader>vtm :highlight Pmenu ctermbg=gray guibg=gray
 
 vnoremap X "_d
 inoremap <C-c> <esc>
