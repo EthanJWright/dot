@@ -91,6 +91,7 @@ let g:startify_lists = [
           \ { 'type': 'sessions',  'header': ['   Sessions']       },
           \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
           \ ]
+let g:startify_custom_header = []
 
 Plug 'vim-scripts/Tabmerge'
 
