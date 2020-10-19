@@ -38,10 +38,14 @@ set shortmess+=c
 " highlight ColorColumn ctermbg=0 guibg=lightgrey
 
 call plug#begin('~/.vim/plugged')
-
+Plug 'chuling/equinusocio-material.vim'
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'junegunn/vim-peekaboo'
 Plug 'tweekmonster/gofmt.vim'
 Plug 'tpope/vim-fugitive'
+Plug 'idanarye/vim-merginal'
 Plug 'vim-utils/vim-man'
 Plug 'mbbill/undotree'
 Plug 'sheerun/vim-polyglot'
@@ -50,20 +54,25 @@ Plug 'junegunn/fzf.vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'lervag/vimtex'
 Plug 'xuhdev/vim-latex-live-preview', {'for': 'tex'}
-command TP :LLPStartPreview
+nnoremap <Leader>lc :VimtexCompile <CR>
 
+Plug 'dense-analysis/ale'
+" In ~/.vim/vimrc, or somewhere similar.
+let g:ale_linters = {
+\   'javascript': ['eslint'],
+\}
 " On-demand lazy load
 Plug 'liuchengxu/vim-which-key'
 Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
 nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
 
-Plug 'majutsushi/tagbar' 
+Plug 'majutsushi/tagbar'
 "TagBar Remap
 map <C-t> :TagbarToggle<CR>
 command T TagbarOpen<Space>j
 let g:tagbar_compact = 1
-Plug 'vim-scripts/ZoomWin' 
-Plug 'junegunn/goyo.vim' 
+Plug 'vim-scripts/ZoomWin'
+Plug 'junegunn/goyo.vim'
 let g:goyo_width=120
 function! s:goyo_enter()
     :set number
@@ -71,15 +80,17 @@ function! s:goyo_enter()
 endfunction
 autocmd! User GoyoEnter nested call <SID>goyo_enter()
 
-Plug 'wesQ3/vim-windowswap' 
-Plug 'kana/vim-textobj-user' 
-Plug 'kana/vim-textobj-function' 
-Plug 'mhinz/vim-signify' 
-Plug 'ludovicchabant/vim-gutentags' 
-Plug 'tpope/vim-surround' 
-Plug 'tpope/vim-repeat' 
-Plug 'tpope/vim-commentary' 
+Plug 'wesQ3/vim-windowswap'
+Plug 'kana/vim-textobj-user'
+Plug 'kana/vim-textobj-function'
+Plug 'mhinz/vim-signify'
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'tpope/vim-obsession'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-commentary'
 Plug 'vimlab/split-term.vim'
+
 Plug 'mhinz/vim-startify'
 let g:startify_change_to_dir = 0
 let g:startify_bookmarks = [
@@ -92,6 +103,7 @@ let g:startify_lists = [
           \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
           \ ]
 let g:startify_custom_header = []
+Plug 'suan/vim-instant-markdown', {'for': 'markdown'}
 
 Plug 'vim-scripts/Tabmerge'
 
@@ -104,7 +116,7 @@ nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
 " Commentary Changes
 autocmd FileType c setlocal commentstring=//\ %s
 
-Plug 'tpope/vim-abolish' 
+Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-unimpaired' " Add extra operators to [
 
 Plug 'tpope/vim-tbone' " tmux bidnings for vim
@@ -119,6 +131,7 @@ augroup END
 let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 
 Plug 'gruvbox-community/gruvbox'
+Plug 'gerardbm/vim-atomic'
 Plug 'sainnhe/gruvbox-material'
 Plug 'phanviet/vim-monokai-pro'
 Plug 'vim-airline/vim-airline'
@@ -187,8 +200,8 @@ nnoremap <Leader>n :bn<CR>
 " Saving and exiting commands
 nnoremap <Leader>wn :w<CR>
 nnoremap <Leader>wa :wa<CR>
-nnoremap <Leader>qn :q<CR> 
-nnoremap <Leader>qa :qa<CR> 
+nnoremap <Leader>qn :q<CR>
+nnoremap <Leader>qa :qa<CR>
 nnoremap <Leader>qq :qa!<CR>
 nnoremap <Leader>wq :wq<CR>
 
@@ -226,7 +239,7 @@ nmap <leader>c] <Plug>(coc-diagnostic-next)
 nmap <leader>cf <Plug>(coc-fix-current)
 nmap <silent> <leader>cp <Plug>(coc-diagnostic-prev-error)
 nmap <silent> <leader>cn <Plug>(coc-diagnostic-next-error)
-nnoremap <leader>cr :CocRestart
+nnoremap <leader>cl :CocRestart
 
 " Sweet Sweet FuGITive
 nmap <leader>gh :diffget //3<CR>
@@ -236,6 +249,7 @@ nmap <leader>gds :Gdiffsplit<cr>
 nmap <leader>gs :G<CR>
 nmap <leader>gc :Git commit<CR>
 nmap <leader>ga :Git add --all<CR>
+nmap <leader>gm :MerginalToggle <CR>
 nmap <leader>gp :Git push<CR>
 nmap <leader>gs :G<CR>
 " Jump though hunks
@@ -412,6 +426,7 @@ set comments+=n::
 " properly]:
 augroup filetype
   autocmd BufNewFile,BufRead *.txt set filetype=human
+  autocmd BufNewFile,BufRead *.tex set filetype=human
 augroup END
 
 " in human-language files, automatically format everything at 72 chars:
@@ -540,7 +555,7 @@ autocmd FileType javascript inoremap ;l for ( var i = 0; i < <..>; i++ ) {<Enter
 autocmd FileType javascript inoremap ;p console.log(`<..>`);<esc>0/<..><Enter>ca<
 autocmd FileType javascript inoremap ;t <esc>A.then( (<..>) => {<Enter><..><Enter>});<esc>kkt>ca<
 autocmd FileType javascript inoremap ;c <esc>$xA.catch( (err) => {<Enter><..><Enter>});<esc>kt>ca<
-autocmd FileType javascript inoremap ;r <..> = require("<..>");<esc>0f>ca<
+autocmd FileType javascript inoremap ;r const <..> = require("<..>");<esc>0f>ca<
 autocmd FileType javascript inoremap ;R <..> = require("<..>"),<esc>0f>ca<
 autocmd FileType javascript inoremap ;J JSON.stringify(<..>, null, 2)<esc>FJf>ca<
 
@@ -562,6 +577,10 @@ autocmd FileType c,cpp inoremap ;i  #include ""<esc>i
 autocmd FileType c,cpp inoremap ;I  #include <><esc>i
 autocmd FileType cpp inoremap ;p  cout << "<..>" << endl;<esc>0t>ca<
 autocmd FileType c inoremap ;p  printf("<..>\n");<esc>0t>ca<
+
+" Markdown
+autocmd BufNewFile,BufRead * if match(getline(1),"*.md") >= 0 | set filetype=md | endif
+autocmd FileType md inoremap ;e  <esc>:-1read $HOME/.vim/skeletons/skeleton.expand.md<CR>gg/<..><Enter>ca<
 
 " Skeleton Builders
 autocmd FileType c inoremap ;t  <esc>:-1read $HOME/.vim/skeletons/.skeleton.c<CR>gg/<..><Enter>ca<
@@ -610,6 +629,10 @@ fun! ALIGN()
     :execute "normal! mtggvG='tzz"
 endfun
 
+fun! FORMAT()
+    :execute "normal! mtgggqG'tzz"
+endfun
+
 function! s:get_visual_selection()
     " Why is this not a built-in Vim script function?!
     let [line_start, column_start] = getpos("'<")[1:2]
@@ -624,6 +647,7 @@ function! s:get_visual_selection()
 endfunction
 
 command AL :call ALIGN()
+command FO :call FORMAT()
 
 " Run current line in shell, load output to buffer
 noremap Q !!sh<CR>
@@ -644,3 +668,40 @@ fu! InsertTabWrapper(direction)
 endfu
 inoremap <tab> <c-r>=InsertTabWrapper("forward")<cr>
 inoremap <s-tab> <c-r>=InsertTabWrapper("backward")<cr>
+
+
+" true colors are required for vim in terminal
+set termguicolors
+
+" use a different style
+" valid values: 'default' (default), 'darker', 'pure'
+let g:equinusocio_material_style = 'default'
+
+" less bright
+" which means some colors will be modified by this formula:
+" (r, g, b) -> ( max(r - less, 0), max(g - less, 0), max(b - less, 0) )
+" let g:equinusocio_material_less = 50
+
+" make vertsplit invisible (visible by default) (default 0)
+" if style == 'pure', then the vertsplit is always visible
+let g:equinusocio_material_hide_vertsplit = 1
+
+" parentheses improved (default 0)
+" enabling this option with 'luochen1990/rainbow' installed is not encouraged
+" because this option and 'luochen1990/rainbow' will registry conflicting events
+" in summary:
+" 1. no 'luochen1990/rainbow' installed, no parentheses improved: nothing to do (default 0)
+" 2. no 'luochen1990/rainbow' installed, want built-in parentheses improved: set to 1
+" 3. 'luochen1990/rainbow' installed: nothing to do (default 0)
+let g:equinusocio_material_bracket_improved = 1
+
+" use a better vertsplit char
+set fillchars+=vert:│
+
+colorscheme equinusocio_material
+
+" this theme has a buildin lightline/airline theme
+let g:airline_theme = 'equinusocio_material'
+let g:lightline = {
+  \ 'colorscheme': 'equinusocio_material',
+  \ }
