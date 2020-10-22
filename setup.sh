@@ -4,7 +4,7 @@
 curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-if [ -f "/usr/local/bin/nvim" ] 
+if [ -f "/usr/local/bin/nvim"  ] || [ -f "/usr/bin/nvim" ]
 then
     echo "NeoVim already installed, moving on." 
 else

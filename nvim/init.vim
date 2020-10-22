@@ -53,6 +53,7 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'lervag/vimtex'
+let g:tex_flavor = 'latex'
 Plug 'xuhdev/vim-latex-live-preview', {'for': 'tex'}
 nnoremap <Leader>lc :VimtexCompile <CR>
 
