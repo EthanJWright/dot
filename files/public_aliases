@@ -25,6 +25,10 @@ alias wanip='dig @resolver1.opendns.com ANY myip.opendns.com +short'    # get cu
 alias rmswp='find . -type f -name "*.sw[klmnop]" -delete'               # TODO: get comment from wystan
 vm () { text=$(man "$@") && echo "$text" | nvim -R +":set ft=man" - ;  } # open man page in vim
 pop() { sed -i '' -e '$ d' $1 ; }  # Remove the last line of a file ( pop ~/.ssn/known_hosts )
+alias q='exit'
+alias r='ranger'
+alias open='xdg-open'
+tr() { mv "$@" ~/.trash; } # Example: gc "Updated the comments"
 
 # Git Shortcuts
 # If no arg is passed add all, otherwise add argument
@@ -77,3 +81,4 @@ alias dlogs="docker logs -f"
 
 #AWS ECS
 alias ecslogin="aws ecr get-login --no-include-email --region us-east-1 | bash"
+

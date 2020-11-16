@@ -53,6 +53,9 @@ fi
 rm -rf ~/.config/nvim
 cp -r nvim ~/.config/nvim
 mkdir -pv ~/.vim/undodir
+mkdir -pv ~/.vim/.notes
+mkdir -pv ~/.vim/.sandbox
+mkdir -pv ~/.vim/.trash
 
 # Install other dotfiles
 cp files/bash_profile ~/.bash_profile
