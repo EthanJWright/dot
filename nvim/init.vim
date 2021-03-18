@@ -62,6 +62,9 @@ Plug 'dense-analysis/ale'
 let g:ale_linters = {
 \   'javascript': ['eslint'],
 \}
+
+Plug 'psf/black'
+
 " On-demand lazy load
 Plug 'liuchengxu/vim-which-key'
 Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
@@ -91,6 +94,8 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-commentary'
 Plug 'vimlab/split-term.vim'
+" JK is escape in split terminal
+tnoremap JK <C-\><C-n>
 
 Plug 'mhinz/vim-startify'
 let g:startify_change_to_dir = 0
@@ -104,6 +109,16 @@ let g:startify_lists = [
           \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
           \ ]
 let g:startify_custom_header = []
+let g:startify_custom_indices = ['h', 'j', 'k', 'l', 'a', 's', 'd', 'f' ]
+nnoremap <Leader>qa :S last<CR>
+" VIM session handling: :S sessionname to save your current session
+" ( doesn't save files ) | from outside of vim : s sessionname to open session
+function MakeSession(session)
+    execute "SSave! ". fnameescape(a:session)
+    execute "qa"
+endfunction
+command! -nargs=1 S call MakeSession(<f-args>)
+
 Plug 'suan/vim-instant-markdown', {'for': 'markdown'}
 
 Plug 'vim-scripts/Tabmerge'
@@ -185,6 +200,8 @@ let g:netrw_winsize = 25
 
 nnoremap <Leader>tt :tabnew<CR>:Startify<CR>
 nnoremap <Leader>tm :Tabmerge right<CR>
+nnoremap <Leader>ta :TagbarToggle<CR>
+nnoremap <Leader>tj :TagbarOpen fj<CR>
 nnoremap <leader>phw :h <C-R>=expand("<cword>")<CR><CR>
 nnoremap <leader>u :UndotreeShow<CR>
 nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
@@ -193,6 +210,8 @@ nnoremap <Leader><CR> :so ~/.config/nvim/init.vim<CR>
 nnoremap <Leader>+ :vertical resize +5<CR>
 nnoremap <Leader>- :vertical resize -5<CR>
 nnoremap <Leader>vs :vs<CR>
+nnoremap <Leader>vt :VTerm<CR>
+nnoremap <Leader>te :Term<CR>
 nnoremap <Leader>sp :sp<CR>
 nnoremap <Leader>h :History:<CR>
 nnoremap <Leader>b :bp<CR>
@@ -273,14 +292,6 @@ augroup END
 autocmd BufWritePre * :call TrimWhitespace()
 
 set nocompatible
-
-" VIM session handling: :S sessionname to save your current session
-" ( doesn't save files ) | from outside of vim : s sessionname to open session
-function MakeSession(session)
-    execute "mks! ". fnameescape("~/.vim/sessions/" . a:session . ".vim")
-    execute "qa"
-endfunction
-command! -nargs=1 S call MakeSession(<f-args>)
 
 set number relativenumber
 
@@ -670,6 +681,8 @@ endfu
 inoremap <tab> <c-r>=InsertTabWrapper("forward")<cr>
 inoremap <s-tab> <c-r>=InsertTabWrapper("backward")<cr>
 
+" Run black on save of python file
+autocmd BufWritePre *.py execute ':Black'
 
 " true colors are required for vim in terminal
 set termguicolors
