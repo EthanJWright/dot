@@ -89,6 +89,7 @@ Plug 'kana/vim-textobj-user'
 Plug 'kana/vim-textobj-function'
 Plug 'mhinz/vim-signify'
 Plug 'ludovicchabant/vim-gutentags'
+Plug 'szw/vim-g'
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
@@ -260,6 +261,9 @@ nmap <leader>cf <Plug>(coc-fix-current)
 nmap <silent> <leader>cp <Plug>(coc-diagnostic-prev-error)
 nmap <silent> <leader>cn <Plug>(coc-diagnostic-next-error)
 nnoremap <leader>cl :CocRestart
+
+" Google Mappings
+xnoremap <leader>lo :Google <CR>
 
 " Sweet Sweet FuGITive
 nmap <leader>gh :diffget //3<CR>
