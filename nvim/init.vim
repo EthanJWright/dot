@@ -45,6 +45,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'junegunn/vim-peekaboo'
 Plug 'tweekmonster/gofmt.vim'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-eunuch'
 Plug 'idanarye/vim-merginal'
 Plug 'vim-utils/vim-man'
 Plug 'mbbill/undotree'
@@ -110,8 +111,7 @@ let g:startify_lists = [
           \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
           \ ]
 let g:startify_custom_header = []
-let g:startify_custom_indices = ['h', 'j', 'k', 'l', 'a', 's', 'd', 'f' ]
-nnoremap <Leader>qa :S last<CR>
+let g:startify_custom_indices = ['h', 'j', 'k', 'l', 'H', 'J', 'K', 'L', 'a', 's', 'd', 'f', 'A', 'S', 'D', 'F']
 " VIM session handling: :S sessionname to save your current session
 " ( doesn't save files ) | from outside of vim : s sessionname to open session
 function MakeSession(session)
@@ -204,7 +204,7 @@ nnoremap <Leader>tm :Tabmerge right<CR>
 nnoremap <Leader>ta :TagbarToggle<CR>
 nnoremap <Leader>tj :TagbarOpen fj<CR>
 nnoremap <leader>phw :h <C-R>=expand("<cword>")<CR><CR>
-nnoremap <leader>u :UndotreeShow<CR>
+nnoremap <leader>u :UndotreeToggle<CR>
 nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
 nnoremap <Leader>ps :Rg<SPACE>
 nnoremap <Leader><CR> :so ~/.config/nvim/init.vim<CR>
@@ -222,9 +222,10 @@ nnoremap <Leader>n :bn<CR>
 nnoremap <Leader>wn :w<CR>
 nnoremap <Leader>wa :wa<CR>
 nnoremap <Leader>qn :q<CR>
-nnoremap <Leader>qa :qa<CR>
 nnoremap <Leader>qq :qa!<CR>
+nnoremap <leader>qa :S last<CR>
 nnoremap <Leader>wq :wq<CR>
+nnoremap <leader>rr :%s/\<<C-r><C-w>\>//g<left><left>
 
 nnoremap <Leader>rp :resize 100<CR>
 " Goyo plugin makes text more readable when writing prose:
@@ -254,7 +255,7 @@ nmap <leader>cd <Plug>(coc-definition)
 nmap <leader>cy <Plug>(coc-type-definition)
 nmap <leader>ci <Plug>(coc-implementation)
 nmap <leader>cr <Plug>(coc-references)
-nmap <leader>rr <Plug>(coc-rename)
+" nmap <leader>rr <Plug>(coc-rename)
 nmap <leader>c[ <Plug>(coc-diagnostic-prev)
 nmap <leader>c] <Plug>(coc-diagnostic-next)
 nmap <leader>cf <Plug>(coc-fix-current)
@@ -274,7 +275,7 @@ nmap <leader>gs :G<CR>
 nmap <leader>gc :Git commit<CR>
 nmap <leader>ga :Git add --all<CR>
 nmap <leader>gm :MerginalToggle <CR>
-nmap <leader>gp :Git push<CR>
+nmap <leader>gp :Git -c push.default=current push<CR>
 nmap <leader>gs :G<CR>
 " Jump though hunks
 nmap <leader>gj <plug>(signify-next-hunk)
@@ -329,11 +330,6 @@ nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
-
-" <> and +- to adjust pane sizes
-nnoremap > :exe "vertical resize " . (winwidth(0) * 3/2)<CR>
-nnoremap < :exe "vertical resize " . (winwidth(0) * 2/3)<CR>
-
 
 nnoremap + :exe "resize " . (winheight(0) * 3/2)<CR>
 nnoremap - :exe "resize " . (winheight(0) * 2/3)<CR>
