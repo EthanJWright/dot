@@ -21,7 +21,7 @@ alias nm='sudo nmap -sn 192.168.1.1/24'                                 # use nm
 alias x='chmod +x'
 alias cl="clear; ls -alh"
 alias c="clear"
-alias wanip='dig @resolver1.opendns.com ANY myip.opendns.com +short'    # get current WAN ip of machine 
+alias wanip='dig +short myip.opendns.com @resolver1.opendns.com'    # get current WAN ip of machine
 alias rmswp='find . -type f -name "*.sw[klmnop]" -delete'               # TODO: get comment from wystan
 vm () { text=$(man "$@") && echo "$text" | nvim -R +":set ft=man" - ;  } # open man page in vim
 pop() { sed -i '' -e '$ d' $1 ; }  # Remove the last line of a file ( pop ~/.ssn/known_hosts )
