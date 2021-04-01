@@ -1,6 +1,7 @@
 syntax on
 
 set guicursor=
+set nocompatible
 set noshowmatch
 set relativenumber
 set nohlsearch
@@ -38,7 +39,7 @@ set shortmess+=c
 " highlight ColorColumn ctermbg=0 guibg=lightgrey
 
 call plug#begin('~/.vim/plugged')
-Plug 'chuling/equinusocio-material.vim'
+Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -49,7 +50,57 @@ Plug 'tpope/vim-eunuch'
 Plug 'idanarye/vim-merginal'
 Plug 'vim-utils/vim-man'
 Plug 'mbbill/undotree'
+Plug 'vim-syntastic/syntastic'
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_python_python_exec = 'python3'
+function! SyntasticCheckHook(errors)
+    if !empty(a:errors)
+        let g:syntastic_loc_list_height = min([len(a:errors), 10])
+    endif
+endfunction
+
+" Colorschemes
+Plug 'gruvbox-community/gruvbox'
+let g:gruvbox_contrast_dark = 'hard'
+if exists('+termguicolors')
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+endif
+
+let g:gruvbox_invert_selection='0'
+Plug 'gerardbm/vim-atomic'
+Plug 'sainnhe/gruvbox-material'
+Plug 'phanviet/vim-monokai-pro'
+Plug 'vim-airline/vim-airline'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+
+Plug 'pineapplegiant/spaceduck', { 'branch': 'main' }
+Plug 'chuling/equinusocio-material.vim'
 Plug 'sheerun/vim-polyglot'
+" --- vim go (polyglot) settings.
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_types = 1
+let g:go_highlight_function_parameters = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_generate_tags = 1
+let g:go_highlight_format_strings = 1
+let g:go_highlight_variable_declarations = 1
+let g:go_auto_sameids = 1
+
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'jiangmiao/auto-pairs'
@@ -121,14 +172,7 @@ endfunction
 command! -nargs=1 S call MakeSession(<f-args>)
 
 Plug 'suan/vim-instant-markdown', {'for': 'markdown'}
-
 Plug 'vim-scripts/Tabmerge'
-
-Plug 'liuchengxu/vim-which-key'
-
-" On-demand lazy load
-Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
-nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
 
 " Commentary Changes
 autocmd FileType c setlocal commentstring=//\ %s
@@ -147,42 +191,12 @@ augroup END
 " Trigger a highlight in the appropriate direction when pressing these keys:
 let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 
-Plug 'gruvbox-community/gruvbox'
-Plug 'gerardbm/vim-atomic'
-Plug 'sainnhe/gruvbox-material'
-Plug 'phanviet/vim-monokai-pro'
-Plug 'vim-airline/vim-airline'
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#left_sep = ' '
-let g:airline#extensions#tabline#left_alt_sep = '|'
 
 Plug 'flazz/vim-colorschemes'
 
 call plug#end()
 
-let g:gruvbox_contrast_dark = 'hard'
-if exists('+termguicolors')
-    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-endif
-let g:gruvbox_invert_selection='0'
 
-
-" --- vim go (polyglot) settings.
-let g:go_highlight_build_constraints = 1
-let g:go_highlight_extra_types = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_structs = 1
-let g:go_highlight_types = 1
-let g:go_highlight_function_parameters = 1
-let g:go_highlight_function_calls = 1
-let g:go_highlight_generate_tags = 1
-let g:go_highlight_format_strings = 1
-let g:go_highlight_variable_declarations = 1
-let g:go_auto_sameids = 1
 
 colorscheme gruvbox
 set background=dark
@@ -213,10 +227,23 @@ nnoremap <Leader>- :vertical resize -5<CR>
 nnoremap <Leader>vs :vs<CR>
 nnoremap <Leader>vt :VTerm<CR>
 nnoremap <Leader>te :Term<CR>
+nnoremap <Leader>to :term<CR>
+
 nnoremap <Leader>sp :sp<CR>
-nnoremap <Leader>h :History:<CR>
-nnoremap <Leader>b :bp<CR>
-nnoremap <Leader>n :bn<CR>
+nnoremap <Leader>bd :bd<CR>
+nnoremap <Leader>btd :bd!<CR>
+
+" FZF mappings
+nnoremap <Leader>fh :History<CR>
+nnoremap <Leader>fl :Lines<CR>
+nnoremap <Leader>ft :Filetypes<CR>
+nnoremap <Leader>fb :Buffer<CR>
+nnoremap <Leader>fc :Commands<CR>
+
+nnoremap <Leader>pb :bp<CR>
+nnoremap <Leader>nb :bn<CR>
+nnoremap <Leader>nl :lnext<CR>
+nnoremap <Leader>pl :lprevious<CR>
 
 " Saving and exiting commands
 nnoremap <Leader>wn :w<CR>
@@ -229,7 +256,7 @@ nnoremap <leader>rr :%s/\<<C-r><C-w>\>//g<left><left>
 
 nnoremap <Leader>rp :resize 100<CR>
 " Goyo plugin makes text more readable when writing prose:
-map <leader>f :Goyo \| set linebreak<CR> \| :set nu rnu<CR>
+map <leader>fu :Goyo \| set linebreak<CR> \| :set nu rnu<CR>
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
@@ -296,7 +323,6 @@ augroup END
 
 autocmd BufWritePre * :call TrimWhitespace()
 
-set nocompatible
 
 set number relativenumber
 
@@ -682,14 +708,13 @@ inoremap <tab> <c-r>=InsertTabWrapper("forward")<cr>
 inoremap <s-tab> <c-r>=InsertTabWrapper("backward")<cr>
 
 " Run black on save of python file
-autocmd BufWritePre *.py execute ':Black'
+" autocmd BufWritePre *.py execute ':Black'
 
 " true colors are required for vim in terminal
-set termguicolors
+" set termguicolors
 
 " use a different style
 " valid values: 'default' (default), 'darker', 'pure'
-let g:equinusocio_material_style = 'default'
 
 " less bright
 " which means some colors will be modified by this formula:
@@ -698,24 +723,25 @@ let g:equinusocio_material_style = 'default'
 
 " make vertsplit invisible (visible by default) (default 0)
 " if style == 'pure', then the vertsplit is always visible
-let g:equinusocio_material_hide_vertsplit = 1
-
-" parentheses improved (default 0)
-" enabling this option with 'luochen1990/rainbow' installed is not encouraged
-" because this option and 'luochen1990/rainbow' will registry conflicting events
-" in summary:
-" 1. no 'luochen1990/rainbow' installed, no parentheses improved: nothing to do (default 0)
-" 2. no 'luochen1990/rainbow' installed, want built-in parentheses improved: set to 1
-" 3. 'luochen1990/rainbow' installed: nothing to do (default 0)
-let g:equinusocio_material_bracket_improved = 1
-
 " use a better vertsplit char
-set fillchars+=vert:│
+" set fillchars+=vert:│
 
-colorscheme equinusocio_material
 
 " this theme has a buildin lightline/airline theme
-let g:airline_theme = 'equinusocio_material'
-let g:lightline = {
-  \ 'colorscheme': 'equinusocio_material',
-  \ }
+" let g:equinusocio_material_bracket_improved = 1
+" let g:equinusocio_material_hide_vertsplit = 1
+" colorscheme equinusocio_material
+" let g:equinusocio_material_style = 'default'
+" let g:airline_theme = 'equinusocio_material'
+" let g:lightline = {
+"   \ 'colorscheme': 'equinusocio_material',
+"   \ }
+
+if exists('+termguicolors')
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors
+endif
+
+let g:airline_theme = 'spaceduck'
+colorscheme spaceduck
