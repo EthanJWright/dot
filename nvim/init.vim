@@ -39,31 +39,40 @@ set shortmess+=c
 " highlight ColorColumn ctermbg=0 guibg=lightgrey
 
 call plug#begin('~/.vim/plugged')
+Plug 'neovim/nvim-lspconfig'
+Plug 'nvim-lua/completion-nvim'
+let g:completion_enable_auto_popup=1
+
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-fzy-native.nvim'
+
 Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'junegunn/vim-peekaboo'
 Plug 'tweekmonster/gofmt.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-eunuch'
+Plug 'tpope/vim-jdaddy'
 Plug 'idanarye/vim-merginal'
-Plug 'vim-utils/vim-man'
 Plug 'mbbill/undotree'
-Plug 'vim-syntastic/syntastic'
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_python_python_exec = 'python3'
-function! SyntasticCheckHook(errors)
-    if !empty(a:errors)
-        let g:syntastic_loc_list_height = min([len(a:errors), 10])
-    endif
-endfunction
+" Plug 'vim-syntastic/syntastic'
+" set statusline+=%#warningmsg#
+" set statusline+=%{SyntasticStatuslineFlag()}
+" set statusline+=%*
+" let g:syntastic_always_populate_loc_list = 1
+" let g:syntastic_auto_loc_list = 1
+" let g:syntastic_check_on_open = 0
+" let g:syntastic_check_on_wq = 0
+" let g:syntastic_python_python_exec = 'python3'
+" function! SyntasticCheckHook(errors)
+"     if !empty(a:errors)
+"         let g:syntastic_loc_list_height = min([len(a:errors), 10])
+"     endif
+" endfunction
 
 " Colorschemes
 Plug 'gruvbox-community/gruvbox'
@@ -101,21 +110,18 @@ let g:go_highlight_format_strings = 1
 let g:go_highlight_variable_declarations = 1
 let g:go_auto_sameids = 1
 
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'lervag/vimtex'
 let g:tex_flavor = 'latex'
 Plug 'xuhdev/vim-latex-live-preview', {'for': 'tex'}
 nnoremap <Leader>lc :VimtexCompile <CR>
 
-Plug 'dense-analysis/ale'
+" Plug 'dense-analysis/ale'
 " In ~/.vim/vimrc, or somewhere similar.
-let g:ale_linters = {
-\   'javascript': ['eslint'],
-\}
+" let g:ale_linters = {
+" \   'javascript': ['eslint'],
+" \}
 
-Plug 'psf/black'
 
 " On-demand lazy load
 Plug 'liuchengxu/vim-which-key'
@@ -198,8 +204,6 @@ call plug#end()
 
 
 
-colorscheme gruvbox
-set background=dark
 
 if executable('rg')
     let g:rg_derive_root='true'
@@ -234,11 +238,11 @@ nnoremap <Leader>bd :bd<CR>
 nnoremap <Leader>btd :bd!<CR>
 
 " FZF mappings
-nnoremap <Leader>fh :History<CR>
-nnoremap <Leader>fl :Lines<CR>
-nnoremap <Leader>ft :Filetypes<CR>
-nnoremap <Leader>fb :Buffer<CR>
-nnoremap <Leader>fc :Commands<CR>
+nnoremap <Leader>fh :Telescope command_history<CR>
+nnoremap <Leader>fl :Telescope live_grep<CR>
+nnoremap <Leader>ft :Telescope filetypes<CR>
+nnoremap <Leader>fb :Telescope buffers<CR>
+nnoremap <Leader>fc :Telescope commands<CR>
 
 nnoremap <Leader>pb :bp<CR>
 nnoremap <Leader>nb :bn<CR>
@@ -268,27 +272,26 @@ function! s:check_back_space() abort
     return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
-inoremap <silent><expr> <TAB>
-            \ pumvisible() ? "\<C-n>" :
-            \ <SID>check_back_space() ? "\<TAB>" :
-            \ coc#refresh()
+" inoremap <silent><expr> <TAB>
+"             \ pumvisible() ? "\<C-n>" :
+"             \ <SID>check_back_space() ? "\<TAB>" :
+"             \ coc#refresh()
 
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-inoremap <silent><expr> <C-space> coc#refresh()
+" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 " GoTo code navigation.
-nmap <leader>cd <Plug>(coc-definition)
-nmap <leader>cy <Plug>(coc-type-definition)
-nmap <leader>ci <Plug>(coc-implementation)
-nmap <leader>cr <Plug>(coc-references)
-" nmap <leader>rr <Plug>(coc-rename)
-nmap <leader>c[ <Plug>(coc-diagnostic-prev)
-nmap <leader>c] <Plug>(coc-diagnostic-next)
-nmap <leader>cf <Plug>(coc-fix-current)
-nmap <silent> <leader>cp <Plug>(coc-diagnostic-prev-error)
-nmap <silent> <leader>cn <Plug>(coc-diagnostic-next-error)
-nnoremap <leader>cl :CocRestart
+" nmap <leader>cd <Plug>(coc-definition)
+" nmap <leader>cy <Plug>(coc-type-definition)
+" nmap <leader>ci <Plug>(coc-implementation)
+" nmap <leader>cr <Plug>(coc-references)
+" " nmap <leader>rr <Plug>(coc-rename)
+" nmap <leader>c[ <Plug>(coc-diagnostic-prev)
+" nmap <leader>c] <Plug>(coc-diagnostic-next)
+" nmap <leader>cf <Plug>(coc-fix-current)
+" nmap <silent> <leader>cp <Plug>(coc-diagnostic-prev-error)
+" nmap <silent> <leader>cn <Plug>(coc-diagnostic-next-error)
+" nnoremap <leader>cl :CocRestart
 
 " Google Mappings
 xnoremap <leader>lo :Google <CR>
@@ -467,6 +470,7 @@ augroup filetype
   autocmd BufNewFile,BufRead *.tex set filetype=human
 augroup END
 
+
 " in human-language files, automatically format everything at 72 chars:
 autocmd FileType mail,human set formatoptions+=t textwidth=72
 
@@ -571,11 +575,6 @@ nnoremap <Leader>th :set invhls hls?<CR>
 " insertion, and over indentations:
 set backspace=eol,start,indent
 
-" have <Tab> (and <Shift>+<Tab> where it works) change the level of
-" indentation:
-inoremap <Tab> <C-T>
-inoremap <S-Tab> <C-D>
-
 syntax on
 
 
@@ -634,8 +633,8 @@ endif
 
 set tags=./tags,tags;$HOME
 
-nmap <C-P> :Files<CR>
-nmap <C-F> :Buffers<CR>
+nmap <C-P> :Telescope find_files<CR>
+nmap <C-F> :Telescope buffers<CR>
 
 nnoremap C :grep! "\<<cword>\>" . -r<CR>:botright copen<CR>
 
@@ -690,26 +689,6 @@ command FO :call FORMAT()
 " Run current line in shell, load output to buffer
 noremap Q !!sh<CR>
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" MULTIPURPOSE TAB KEY
-" Indent if we're at the beginning of a line. Else, do completion.
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-fu! InsertTabWrapper(direction)
-  let char_before = col('.') - 1
-  if !char_before || getline('.')[char_before - 1] !~ '\k'
-    return "\<tab>"
-  elseif "backward" == a:direction
-    return "\<c-p>"
-  else
-    return "\<c-n>"
-  endif
-endfu
-inoremap <tab> <c-r>=InsertTabWrapper("forward")<cr>
-inoremap <s-tab> <c-r>=InsertTabWrapper("backward")<cr>
-
-" Run black on save of python file
-" autocmd BufWritePre *.py execute ':Black'
-
 " true colors are required for vim in terminal
 " set termguicolors
 
@@ -728,14 +707,14 @@ inoremap <s-tab> <c-r>=InsertTabWrapper("backward")<cr>
 
 
 " this theme has a buildin lightline/airline theme
-" let g:equinusocio_material_bracket_improved = 1
-" let g:equinusocio_material_hide_vertsplit = 1
-" colorscheme equinusocio_material
-" let g:equinusocio_material_style = 'default'
-" let g:airline_theme = 'equinusocio_material'
-" let g:lightline = {
-"   \ 'colorscheme': 'equinusocio_material',
-"   \ }
+let g:equinusocio_material_bracket_improved = 1
+let g:equinusocio_material_hide_vertsplit = 1
+colorscheme equinusocio_material
+let g:equinusocio_material_style = 'default'
+let g:airline_theme = 'equinusocio_material'
+let g:lightline = {
+  \ 'colorscheme': 'equinusocio_material',
+  \ }
 
 if exists('+termguicolors')
   let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
@@ -743,5 +722,115 @@ if exists('+termguicolors')
   set termguicolors
 endif
 
-let g:airline_theme = 'spaceduck'
-colorscheme spaceduck
+" let g:airline_theme = 'spaceduck'
+" colorscheme spaceduck
+
+" Neovim 0.5.0 configurations nightly
+
+lua << EOF
+vim.lsp.set_log_level("debug")
+EOF
+
+" Use <Tab> and <S-Tab> to navigate through popup menu
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+" Set completeopt to have a better completion experience
+set completeopt=menuone,noinsert,noselect
+
+" Avoid showing message extra message when using completion
+set shortmess+=c
+let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy', 'all']
+let g:completion_matching_smart_case = 1
+
+lua << EOF
+
+local nvim_lsp = require('lspconfig')
+local on_attach = function(client, bufnr)
+  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+  -- Mappings.
+  local opts = { noremap=true, silent=true }
+  buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  buf_set_keymap('n', '<leader>k', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+  buf_set_keymap('n', '<leader>wd', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+  buf_set_keymap('n', '<leader>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+  buf_set_keymap('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  buf_set_keymap('n', '<leader>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+  buf_set_keymap('n', '<leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+
+  -- Set some keybinds conditional on server capabilities
+  if client.resolved_capabilities.document_formatting then
+    buf_set_keymap("n", "<leader>ff", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+  elseif client.resolved_capabilities.document_range_formatting then
+    buf_set_keymap("n", "<leader>ff", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
+  end
+
+  -- Set autocommands conditional on server_capabilities
+  if client.resolved_capabilities.document_highlight then
+    vim.api.nvim_exec([[
+      hi LspReferenceRead cterm=bold ctermbg=red gui=italic,underline,bold
+      hi LspReferenceText cterm=bold ctermbg=red gui=italic,underline,bold
+      hi LspReferenceWrite cterm=bold ctermbg=red gui=italic,underline,bold
+      augroup lsp_document_highlight
+        autocmd! * <buffer>
+        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+      augroup END
+    ]], false)
+  end
+end
+
+-- Use a loop to conveniently both setup defined servers 
+-- and map buffer local keybindings when the language server attaches
+local servers = {"pyright" ,"pyls", "rust_analyzer", "tsserver" }
+for _, lsp in ipairs(servers) do
+  nvim_lsp[lsp].setup { on_attach = on_attach }
+end
+EOF
+
+" Use completion-nvim in every buffer
+autocmd BufEnter * lua require'completion'.on_attach()
+
+
+" Telescope Configuration
+lua << EOF
+local actions = require('telescope.actions')
+require('telescope').setup {
+    defaults = {
+        file_sorter = require('telescope.sorters').get_fzy_sorter,
+        prompt_prefix = ' >',
+        color_devicons = true,
+
+        file_previewer   = require('telescope.previewers').vim_buffer_cat.new,
+        grep_previewer   = require('telescope.previewers').vim_buffer_vimgrep.new,
+        qflist_previewer = require('telescope.previewers').vim_buffer_qflist.new,
+
+        mappings = {
+            i = {
+                ["<C-x>"] = false,
+                ["<C-q>"] = actions.send_to_qflist,
+            },
+        }
+    },
+    extensions = {
+        fzy_native = {
+            override_generic_sorter = false,
+            override_file_sorter = true,
+        }
+    }
+}
+
+require('telescope').load_extension('fzy_native')
+EOF
