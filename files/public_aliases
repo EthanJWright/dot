@@ -41,6 +41,7 @@ ga() {
 }
 
 gc() { git commit -m "$@" ; } # Example: gc "Updated the comments"
+gi() { curl -sL https://www.toptal.com/developers/gitignore/api/$@ >> .gitignore;} # curl language specific git ignore, place in .gitignore
 alias gp='git push'         # This one is pretty straight forward.
 alias gs='git status'
 
