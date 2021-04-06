@@ -40,18 +40,24 @@ set shortmess+=c
 
 call plug#begin('~/.vim/plugged')
 Plug 'neovim/nvim-lspconfig'
-Plug 'nvim-lua/completion-nvim'
-let g:completion_enable_auto_popup=1
+Plug 'hrsh7th/nvim-compe'
+Plug 'nvim-treesitter/nvim-treesitter'
 
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzy-native.nvim'
+Plug 'nvim-telescope/telescope-symbols.nvim'
+Plug 'kyazdani42/nvim-web-devicons'
 
-Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'kyazdani42/nvim-tree.lua'
+let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache' ] "empty by default
+
+Plug 'AndrewRadev/splitjoin.vim'
+Plug 'lukas-reineke/indent-blankline.nvim', {'branch': 'lua'}
+let g:indent_blankline_show_current_context = v:true
 Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'junegunn/vim-peekaboo'
 Plug 'tweekmonster/gofmt.vim'
 Plug 'tpope/vim-fugitive'
@@ -59,40 +65,7 @@ Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-jdaddy'
 Plug 'idanarye/vim-merginal'
 Plug 'mbbill/undotree'
-" Plug 'vim-syntastic/syntastic'
-" set statusline+=%#warningmsg#
-" set statusline+=%{SyntasticStatuslineFlag()}
-" set statusline+=%*
-" let g:syntastic_always_populate_loc_list = 1
-" let g:syntastic_auto_loc_list = 1
-" let g:syntastic_check_on_open = 0
-" let g:syntastic_check_on_wq = 0
-" let g:syntastic_python_python_exec = 'python3'
-" function! SyntasticCheckHook(errors)
-"     if !empty(a:errors)
-"         let g:syntastic_loc_list_height = min([len(a:errors), 10])
-"     endif
-" endfunction
 
-" Colorschemes
-Plug 'gruvbox-community/gruvbox'
-let g:gruvbox_contrast_dark = 'hard'
-if exists('+termguicolors')
-    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-endif
-
-let g:gruvbox_invert_selection='0'
-Plug 'gerardbm/vim-atomic'
-Plug 'sainnhe/gruvbox-material'
-Plug 'phanviet/vim-monokai-pro'
-Plug 'vim-airline/vim-airline'
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#left_sep = ' '
-let g:airline#extensions#tabline#left_alt_sep = '|'
-
-Plug 'pineapplegiant/spaceduck', { 'branch': 'main' }
-Plug 'chuling/equinusocio-material.vim'
 Plug 'sheerun/vim-polyglot'
 " --- vim go (polyglot) settings.
 let g:go_highlight_build_constraints = 1
@@ -115,14 +88,7 @@ Plug 'lervag/vimtex'
 let g:tex_flavor = 'latex'
 Plug 'xuhdev/vim-latex-live-preview', {'for': 'tex'}
 nnoremap <Leader>lc :VimtexCompile <CR>
-
-" Plug 'dense-analysis/ale'
-" In ~/.vim/vimrc, or somewhere similar.
-" let g:ale_linters = {
-" \   'javascript': ['eslint'],
-" \}
-
-
+"
 " On-demand lazy load
 Plug 'liuchengxu/vim-which-key'
 Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
@@ -179,6 +145,7 @@ command! -nargs=1 S call MakeSession(<f-args>)
 
 Plug 'suan/vim-instant-markdown', {'for': 'markdown'}
 Plug 'vim-scripts/Tabmerge'
+Plug 'romgrk/barbar.nvim'
 
 " Commentary Changes
 autocmd FileType c setlocal commentstring=//\ %s
@@ -198,12 +165,36 @@ augroup END
 let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 
 
-Plug 'flazz/vim-colorschemes'
+" Line Bar
+Plug 'glepnir/galaxyline.nvim' , {'branch': 'main'}
 
+
+
+" Colorschemes
+Plug 'pineapplegiant/spaceduck', { 'branch': 'main' }
+Plug 'chuling/equinusocio-material.vim'
+Plug 'yonlu/omni.vim'
+Plug 'gruvbox-community/gruvbox'
+let g:gruvbox_contrast_dark = 'hard'
+if exists('+termguicolors')
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+endif
+let g:gruvbox_invert_selection='0'
+Plug 'gerardbm/vim-atomic'
+Plug 'sainnhe/gruvbox-material'
+Plug 'phanviet/vim-monokai-pro'
+Plug 'tjdevries/colorbuddy.vim'
+Plug 'Th3Whit3Wolf/onebuddy'
+Plug 'flazz/vim-colorschemes'
 call plug#end()
 
 
 
+" SET COLORSCHEME
+luafile ~/.config/nvim/eviline.lua
+lua require('colorbuddy').colorscheme('onebuddy')
+" colorscheme omni
 
 if executable('rg')
     let g:rg_derive_root='true'
@@ -217,6 +208,7 @@ let g:vrfr_rg = 'true'
 let g:netrw_banner = 0
 let g:netrw_winsize = 25
 
+nnoremap <Leader>tr :NvimTreeToggle<CR>
 nnoremap <Leader>tt :tabnew<CR>:Startify<CR>
 nnoremap <Leader>tm :Tabmerge right<CR>
 nnoremap <Leader>ta :TagbarToggle<CR>
@@ -238,11 +230,19 @@ nnoremap <Leader>bd :bd<CR>
 nnoremap <Leader>btd :bd!<CR>
 
 " FZF mappings
-nnoremap <Leader>fh :Telescope command_history<CR>
-nnoremap <Leader>fl :Telescope live_grep<CR>
-nnoremap <Leader>ft :Telescope filetypes<CR>
-nnoremap <Leader>fb :Telescope buffers<CR>
-nnoremap <Leader>fc :Telescope commands<CR>
+nmap <C-P> :Telescope find_files theme=get_dropdown<CR>
+nmap <C-F> :Telescope buffers theme=get_dropdown<CR>
+nnoremap <Leader>fh :Telescope command_history theme=get_dropdown<CR>
+nnoremap <Leader>fl :Telescope current_buffer_fuzzy_find<CR>
+nnoremap <Leader>fL :Telescope live_grep<CR>
+nnoremap <Leader>ft :Telescope filetypes theme=get_dropdown<CR>
+nnoremap <Leader>fc :Telescope commands theme=get_dropdown<CR>
+nnoremap <Leader>fd :Telescope lsp_document_diagnostics theme=get_dropdown<CR>
+nnoremap <Leader>ff :Telescope current_buffer_fuzzy_find<CR>
+nnoremap <Leader>fu :Telescope grep_string<CR>
+nnoremap <Leader>fo :Telescope oldfiles theme=get_dropdown<CR>
+
+
 
 nnoremap <Leader>pb :bp<CR>
 nnoremap <Leader>nb :bn<CR>
@@ -259,39 +259,11 @@ nnoremap <Leader>wq :wq<CR>
 nnoremap <leader>rr :%s/\<<C-r><C-w>\>//g<left><left>
 
 nnoremap <Leader>rp :resize 100<CR>
-" Goyo plugin makes text more readable when writing prose:
-map <leader>fu :Goyo \| set linebreak<CR> \| :set nu rnu<CR>
-vnoremap J :m '>+1<CR>gv=gv
-vnoremap K :m '<-2<CR>gv=gv
-
-vnoremap X "_d
-inoremap <C-c> <esc>
 
 function! s:check_back_space() abort
     let col = col('.') - 1
     return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
-
-" inoremap <silent><expr> <TAB>
-"             \ pumvisible() ? "\<C-n>" :
-"             \ <SID>check_back_space() ? "\<TAB>" :
-"             \ coc#refresh()
-
-command! -nargs=0 Prettier :CocCommand prettier.formatFile
-" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-" GoTo code navigation.
-" nmap <leader>cd <Plug>(coc-definition)
-" nmap <leader>cy <Plug>(coc-type-definition)
-" nmap <leader>ci <Plug>(coc-implementation)
-" nmap <leader>cr <Plug>(coc-references)
-" " nmap <leader>rr <Plug>(coc-rename)
-" nmap <leader>c[ <Plug>(coc-diagnostic-prev)
-" nmap <leader>c] <Plug>(coc-diagnostic-next)
-" nmap <leader>cf <Plug>(coc-fix-current)
-" nmap <silent> <leader>cp <Plug>(coc-diagnostic-prev-error)
-" nmap <silent> <leader>cn <Plug>(coc-diagnostic-next-error)
-" nnoremap <leader>cl :CocRestart
 
 " Google Mappings
 xnoremap <leader>lo :Google <CR>
@@ -305,6 +277,7 @@ nmap <leader>gs :G<CR>
 nmap <leader>gc :Git commit<CR>
 nmap <leader>ga :Git add --all<CR>
 nmap <leader>gm :MerginalToggle <CR>
+nnoremap <Leader>gb :Telescope git_branches<CR>
 nmap <leader>gp :Git -c push.default=current push<CR>
 nmap <leader>gs :G<CR>
 " Jump though hunks
@@ -633,8 +606,6 @@ endif
 
 set tags=./tags,tags;$HOME
 
-nmap <C-P> :Telescope find_files<CR>
-nmap <C-F> :Telescope buffers<CR>
 
 nnoremap C :grep! "\<<cword>\>" . -r<CR>:botright copen<CR>
 
@@ -686,44 +657,12 @@ endfunction
 command AL :call ALIGN()
 command FO :call FORMAT()
 
-" Run current line in shell, load output to buffer
-noremap Q !!sh<CR>
-
-" true colors are required for vim in terminal
-" set termguicolors
-
-" use a different style
-" valid values: 'default' (default), 'darker', 'pure'
-
-" less bright
-" which means some colors will be modified by this formula:
-" (r, g, b) -> ( max(r - less, 0), max(g - less, 0), max(b - less, 0) )
-" let g:equinusocio_material_less = 50
-
-" make vertsplit invisible (visible by default) (default 0)
-" if style == 'pure', then the vertsplit is always visible
-" use a better vertsplit char
-" set fillchars+=vert:│
-
-
-" this theme has a buildin lightline/airline theme
-let g:equinusocio_material_bracket_improved = 1
-let g:equinusocio_material_hide_vertsplit = 1
-colorscheme equinusocio_material
-let g:equinusocio_material_style = 'default'
-let g:airline_theme = 'equinusocio_material'
-let g:lightline = {
-  \ 'colorscheme': 'equinusocio_material',
-  \ }
-
 if exists('+termguicolors')
   let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
   let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
   set termguicolors
 endif
 
-" let g:airline_theme = 'spaceduck'
-" colorscheme spaceduck
 
 " Neovim 0.5.0 configurations nightly
 
@@ -742,6 +681,7 @@ set completeopt=menuone,noinsert,noselect
 set shortmess+=c
 let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy', 'all']
 let g:completion_matching_smart_case = 1
+
 
 lua << EOF
 
@@ -772,9 +712,9 @@ local on_attach = function(client, bufnr)
 
   -- Set some keybinds conditional on server capabilities
   if client.resolved_capabilities.document_formatting then
-    buf_set_keymap("n", "<leader>ff", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+    buf_set_keymap("n", "<leader>fi", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
   elseif client.resolved_capabilities.document_range_formatting then
-    buf_set_keymap("n", "<leader>ff", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
+    buf_set_keymap("n", "<leader>fi", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
   end
 
   -- Set autocommands conditional on server_capabilities
@@ -792,16 +732,16 @@ local on_attach = function(client, bufnr)
   end
 end
 
--- Use a loop to conveniently both setup defined servers 
+-- Use a loop to conveniently both setup defined servers
 -- and map buffer local keybindings when the language server attaches
-local servers = {"pyright" ,"pyls", "rust_analyzer", "tsserver" }
+local servers = {"pyright", "pyls","rust_analyzer", "tsserver" }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
 EOF
 
 " Use completion-nvim in every buffer
-autocmd BufEnter * lua require'completion'.on_attach()
+" autocmd BufEnter * lua require'completion'.on_attach()
 
 
 " Telescope Configuration
@@ -819,7 +759,6 @@ require('telescope').setup {
 
         mappings = {
             i = {
-                ["<C-x>"] = false,
                 ["<C-q>"] = actions.send_to_qflist,
                 ["<C-j>"] = actions.move_selection_next,
                 ["<C-k>"] = actions.move_selection_previous,
@@ -835,4 +774,43 @@ require('telescope').setup {
 }
 
 require('telescope').load_extension('fzy_native')
+
+local M = {}
+M.git_branches = function()
+    require("telescope.builtin").git_branches({
+        attach_mappings = function(_, map)
+            map('i', '<c-d>', actions.git_delete_branch)
+            map('n', '<c-d>', actions.git_delete_branch)
+            return true
+        end
+    })
+end
+
+return M
+EOF
+
+lua << EOF
+require'compe'.setup {
+  enabled = true;
+  autocomplete = true;
+  debug = false;
+  min_length = 1;
+  preselect = 'enable';
+  throttle_time = 80;
+  source_timeout = 200;
+  incomplete_delay = 400;
+  max_abbr_width = 100;
+  max_kind_width = 100;
+  max_menu_width = 100;
+  documentation = true;
+
+  source = {
+    path = true;
+    buffer = true;
+    calc = true;
+    nvim_lsp = true;
+    nvim_lua = true;
+    vsnip = true;
+  };
+}
 EOF
