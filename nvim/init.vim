@@ -1,3 +1,4 @@
+let g:which_key_map =  {}
 syntax on
 
 set guicursor=
@@ -87,12 +88,10 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'lervag/vimtex'
 let g:tex_flavor = 'latex'
 Plug 'xuhdev/vim-latex-live-preview', {'for': 'tex'}
-nnoremap <Leader>lc :VimtexCompile <CR>
 "
 " On-demand lazy load
 Plug 'liuchengxu/vim-which-key'
 Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
-nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
 
 Plug 'majutsushi/tagbar'
 "TagBar Remap
@@ -201,64 +200,21 @@ if executable('rg')
 endif
 
 let loaded_matchparen = 1
-let mapleader = " "
 
 let g:netrw_browse_split = 2
 let g:vrfr_rg = 'true'
 let g:netrw_banner = 0
 let g:netrw_winsize = 25
 
-nnoremap <Leader>tr :NvimTreeToggle<CR>
-nnoremap <Leader>tt :tabnew<CR>:Startify<CR>
-nnoremap <Leader>tm :Tabmerge right<CR>
-nnoremap <Leader>ta :TagbarToggle<CR>
-nnoremap <Leader>tj :TagbarOpen fj<CR>
-nnoremap <leader>phw :h <C-R>=expand("<cword>")<CR><CR>
-nnoremap <leader>u :UndotreeToggle<CR>
-nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
-nnoremap <Leader>ps :Rg<SPACE>
-nnoremap <Leader><CR> :so ~/.config/nvim/init.vim<CR>
-nnoremap <Leader>+ :vertical resize +5<CR>
-nnoremap <Leader>- :vertical resize -5<CR>
-nnoremap <Leader>vs :vs<CR>
-nnoremap <Leader>vt :VTerm<CR>
-nnoremap <Leader>te :Term<CR>
-nnoremap <Leader>to :term<CR>
-
-nnoremap <Leader>sp :sp<CR>
-nnoremap <Leader>bd :bd<CR>
-nnoremap <Leader>btd :bd!<CR>
 
 " FZF mappings
 nmap <C-P> :Telescope find_files theme=get_dropdown<CR>
 nmap <C-F> :Telescope buffers theme=get_dropdown<CR>
-nnoremap <Leader>fh :Telescope command_history theme=get_dropdown<CR>
-nnoremap <Leader>fl :Telescope current_buffer_fuzzy_find<CR>
-nnoremap <Leader>fL :Telescope live_grep<CR>
-nnoremap <Leader>ft :Telescope filetypes theme=get_dropdown<CR>
-nnoremap <Leader>fc :Telescope commands theme=get_dropdown<CR>
-nnoremap <Leader>fd :Telescope lsp_document_diagnostics theme=get_dropdown<CR>
-nnoremap <Leader>ff :Telescope current_buffer_fuzzy_find<CR>
-nnoremap <Leader>fu :Telescope grep_string<CR>
-nnoremap <Leader>fo :Telescope oldfiles theme=get_dropdown<CR>
 
 
 
-nnoremap <Leader>pb :bp<CR>
-nnoremap <Leader>nb :bn<CR>
-nnoremap <Leader>nl :lnext<CR>
-nnoremap <Leader>pl :lprevious<CR>
 
 " Saving and exiting commands
-nnoremap <Leader>wn :w<CR>
-nnoremap <Leader>wa :wa<CR>
-nnoremap <Leader>qn :q<CR>
-nnoremap <Leader>qq :qa!<CR>
-nnoremap <leader>qa :S last<CR>
-nnoremap <Leader>wq :wq<CR>
-nnoremap <leader>rr :%s/\<<C-r><C-w>\>//g<left><left>
-
-nnoremap <Leader>rp :resize 100<CR>
 
 function! s:check_back_space() abort
     let col = col('.') - 1
@@ -266,25 +222,8 @@ function! s:check_back_space() abort
 endfunction
 
 " Google Mappings
-xnoremap <leader>lo :Google <CR>
 
 " Sweet Sweet FuGITive
-nmap <leader>gh :diffget //3<CR>
-nmap <leader>gu :diffget //2<CR>
-nmap <leader>gdd :Git diff<cr>
-nmap <leader>gds :Gdiffsplit<cr>
-nmap <leader>gs :G<CR>
-nmap <leader>gc :Git commit<CR>
-nmap <leader>ga :Git add --all<CR>
-nmap <leader>gm :MerginalToggle <CR>
-nnoremap <Leader>gb :Telescope git_branches<CR>
-nmap <leader>gp :Git -c push.default=current push<CR>
-nmap <leader>gs :G<CR>
-" Jump though hunks
-nmap <leader>gj <plug>(signify-next-hunk)
-nmap <leader>gk <plug>(signify-prev-hunk)
-nmap <leader>gJ 9999<leader>gJ
-nmap <leader>gK 9999<leader>gk
 
 fun! TrimWhitespace()
     let l:save = winsaveview()
@@ -539,7 +478,6 @@ nmap <F2> \tl
 
 " have <L>th ("toggle highlight") toggle highlighting of search matches, and
 " report the change:
-nnoremap <Leader>th :set invhls hls?<CR>
 
 
 " * Keystrokes -- Insert Mode
@@ -708,7 +646,7 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<leader>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
   buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  buf_set_keymap('n', '<leader>d', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
 
   -- Set some keybinds conditional on server capabilities
   if client.resolved_capabilities.document_formatting then
@@ -814,3 +752,115 @@ require'compe'.setup {
   };
 }
 EOF
+
+" Whichkey Keybinds
+let g:which_key_map['<CR>'] = [ ':so ~/.config/nvim/init.vim', 'reload vimrc']
+
+let g:which_key_map.f = {
+      \ 'name' : '+fuzzy' ,
+      \ 'h': [':Telescope command_history theme=get_dropdown', 'previous commands'],
+      \ 'f': [':Telescope current_buffer_fuzzy_find', 'string in current buffer'],
+      \ 'l': [':Telescope live_grep', 'all repo'],
+      \ 't': [':Telescope filetypes theme=get_dropdown', 'set filetype'],
+      \ 'c': [':Telescope commands theme=get_dropdown', 'commands'],
+      \ 'd': [':Telescope lsp_document_diagnostics theme=get_dropdown', 'lsp diagnostics warnings'],
+      \ 'u': [':Telescope grep_string', 'seach under cursor'],
+      \ 'o': [':Telescope oldfiles theme=get_dropdown', 'recently open'],
+      \ }
+
+let g:which_key_map.t = {
+      \ 'name' : '+file' ,
+      \ 't' : ['tabnew', 'new tab'],
+      \ 'm' : [':Tabmerge right', 'merge tab'],
+      \ 'a' : [':TagbarToggle', 'open tagbar'],
+      \ 'j' : [':TagbarOpen fj', 'jump to tagbar'],
+      \ 'h' : [':set invhls hls?', 'toggle highlight'],
+      \ 'e' : [':Term', 'split terminal'],
+      \ 'o' : [':term', 'terminal over buffer'],
+      \ }
+
+let g:which_key_map.v = {
+      \ 'name' : '+vertical',
+      \ 's' : [':vs', '<..>'],
+      \ 't' : [':VTerm', '<..>'],
+      \ }
+
+let g:which_key_map.w = {
+      \ 'name' : '+write' ,
+      \ 'n' : [':w', 'write current'],
+      \ 'a' : [':wa', 'write all'],
+      \ 'q' : [':wq', 'write and quit'],
+      \ }
+
+let g:which_key_map.q = {
+      \ 'name' : '+quit',
+      \ 'n' : [':q', 'force'],
+      \ 'q' : [':qa!', 'all force'],
+      \ 'a' : [':S last', 'current'],
+      \ }
+
+let g:which_key_map.p = {
+      \ 'name' : '+next',
+      \ 'l' : [':lprevious', 'previous in list'],
+      \ 'b' : [':bp', 'prevous buffer'],
+      \ }
+
+let g:which_key_map.b = {
+      \ 'name' : '+buffer',
+      \ 'd' : [':bd', 'delete'],
+      \ 'td' : [':bd!', 'force delete'],
+      \ }
+
+
+let g:which_key_map.s = {
+      \ 'name' : '+split' ,
+      \ 'p' : [':sp', 'pane'],
+      \ }
+
+
+let g:which_key_map.l = {
+      \ 'name' : '+lookup' ,
+      \ 'o' : [':Google ', 'google'],
+      \ 'c' : [':VimtexCompile', 'latex compile'],
+      \ }
+
+let g:which_key_map.g = {
+      \ 'name' : '+git' ,
+      \ 'dd' : [':Git diff', '<..>'],
+      \ 'ds' : [':Gdiffsplit', '<..>'],
+      \ 's' : [':G', '<..>'],
+      \ 'c' : [':Git commit', '<..>'],
+      \ 'a' : [':Git add --all', '<..>'],
+      \ 'm' : [':MerginalToggle ', '<..>'],
+      \ 'b' : [':Telescope git_branches', '<..>'],
+      \ 'p' : [':Git -c push.default=current push', '<..>'],
+      \ }
+
+let g:which_key_map.c = {
+      \ 'name' : '+config' ,
+      \ 'v' : [ ':so ~/.config/nvim/init.vim', 'reload vimrc'],
+      \ 'c' : [':Telescope find_files ', ''],
+      \ }
+
+let g:which_key_map['u'] = [ ':UndotreeToggle', 'undo tree']
+
+let g:which_key_map.r = {
+      \ 'name' : '+rename' ,
+      \ 'rr' : ['%s/\<<C-r><C-w>\>//g<left><left>', 'under cursor']
+      \ }
+
+let g:which_key_map.n = {
+      \ 'name' : '+next' ,
+      \ 'b' : [':bn', 'buffer'],
+      \ 'l' : [':lnext', 'quickfix'],
+      \ }
+
+" let g:which_key_map.<..> = {
+"       \ 'name' : '+<..>' ,
+"       \ }
+
+let g:mapleader = " "
+nnoremap <silent> <leader>      :<c-u>WhichKey '<Space>'<CR>
+autocmd! User vim-which-key call which_key#register('<Space>', 'g:which_key_map')
+
+
