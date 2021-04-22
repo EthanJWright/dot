@@ -43,6 +43,18 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-compe'
 Plug 'nvim-treesitter/nvim-treesitter'
 
+Plug 'kdav5758/TrueZen.nvim'
+
+" LSP Stuff
+Plug 'onsails/lspkind-nvim'
+Plug 'kosayoda/nvim-lightbulb'
+Plug 'ray-x/lsp_signature.nvim'
+
+"Debugger
+Plug 'mfussenegger/nvim-dap'
+Plug 'mfussenegger/nvim-dap-python'
+
+
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -52,13 +64,17 @@ Plug 'kyazdani42/nvim-web-devicons'
 
 Plug 'kyazdani42/nvim-tree.lua'
 let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache' ] "empty by default
+let g:nvim_tree_width_allow_resize  = 1
 
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'lukas-reineke/indent-blankline.nvim', {'branch': 'lua'}
 let g:indent_blankline_show_current_context = v:true
 Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
-Plug 'junegunn/vim-peekaboo'
+" Registers
+Plug 'gennaro-tedesco/nvim-peekup'
+Plug 'tversteeg/registers.nvim'
+
 Plug 'tweekmonster/gofmt.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-eunuch'
@@ -90,9 +106,9 @@ Plug 'xuhdev/vim-latex-live-preview', {'for': 'tex'}
 nnoremap <Leader>lc :VimtexCompile <CR>
 "
 " On-demand lazy load
-Plug 'liuchengxu/vim-which-key'
 Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
-nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
+nnoremap <silent> <leader> :WhichKey ' '<CR>
+set timeoutlen=500
 
 Plug 'majutsushi/tagbar'
 "TagBar Remap
@@ -112,7 +128,7 @@ Plug 'wesQ3/vim-windowswap'
 Plug 'kana/vim-textobj-user'
 Plug 'kana/vim-textobj-function'
 Plug 'mhinz/vim-signify'
-Plug 'ludovicchabant/vim-gutentags'
+" Plug 'ludovicchabant/vim-gutentags'
 Plug 'szw/vim-g'
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-surround'
@@ -143,7 +159,8 @@ function MakeSession(session)
 endfunction
 command! -nargs=1 S call MakeSession(<f-args>)
 
-Plug 'suan/vim-instant-markdown', {'for': 'markdown'}
+Plug 'npxbr/glow.nvim', {'do': ':GlowInstall'}
+
 Plug 'vim-scripts/Tabmerge'
 Plug 'romgrk/barbar.nvim'
 
@@ -161,6 +178,7 @@ augroup qs_colors
   autocmd ColorScheme * highlight QuickScopePrimary guifg='#afff5f' gui=underline ctermfg=155 cterm=underline
   autocmd ColorScheme * highlight QuickScopeSecondary guifg='#5fffff' gui=underline ctermfg=81 cterm=underline
 augroup END
+
 " Trigger a highlight in the appropriate direction when pressing these keys:
 let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 
@@ -168,11 +186,11 @@ let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 " Line Bar
 Plug 'glepnir/galaxyline.nvim' , {'branch': 'main'}
 
-
-
 " Colorschemes
 Plug 'pineapplegiant/spaceduck', { 'branch': 'main' }
+Plug 'folke/tokyonight.nvim'
 Plug 'chuling/equinusocio-material.vim'
+Plug 'savq/melange'
 Plug 'yonlu/omni.vim'
 Plug 'gruvbox-community/gruvbox'
 let g:gruvbox_contrast_dark = 'hard'
@@ -180,6 +198,7 @@ if exists('+termguicolors')
     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 endif
+
 let g:gruvbox_invert_selection='0'
 Plug 'gerardbm/vim-atomic'
 Plug 'sainnhe/gruvbox-material'
@@ -193,8 +212,8 @@ call plug#end()
 
 " SET COLORSCHEME
 luafile ~/.config/nvim/eviline.lua
-lua require('colorbuddy').colorscheme('onebuddy')
-" colorscheme omni
+" lua require('colorbuddy').colorscheme('onebuddy')
+colorscheme tokyonight
 
 if executable('rg')
     let g:rg_derive_root='true'
@@ -208,18 +227,21 @@ let g:vrfr_rg = 'true'
 let g:netrw_banner = 0
 let g:netrw_winsize = 25
 
-nnoremap <Leader>tr :NvimTreeToggle<CR>
+nmap <Leader>md :Glow<CR>
+nnoremap <Leader>tr :NvimTreeToggle<CR><C-W><C-L>
+nnoremap <Leader>tc :NvimTreeToggle<CR> :vertical resize +30<CR><C-W><C-L>
 nnoremap <Leader>tt :tabnew<CR>:Startify<CR>
 nnoremap <Leader>tm :Tabmerge right<CR>
 nnoremap <Leader>ta :TagbarToggle<CR>
+nnoremap <Leader>tf :Tabularize /\|<CR>
 nnoremap <Leader>tj :TagbarOpen fj<CR>
 nnoremap <leader>phw :h <C-R>=expand("<cword>")<CR><CR>
 nnoremap <leader>u :UndotreeToggle<CR>
 nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
 nnoremap <Leader>ps :Rg<SPACE>
 nnoremap <Leader><CR> :so ~/.config/nvim/init.vim<CR>
-nnoremap <Leader>+ :vertical resize +5<CR>
-nnoremap <Leader>- :vertical resize -5<CR>
+nnoremap <Leader>> :vertical resize +15<CR>
+nnoremap <Leader>< :vertical resize -15<CR>
 nnoremap <Leader>vs :vs<CR>
 nnoremap <Leader>vt :VTerm<CR>
 nnoremap <Leader>te :Term<CR>
@@ -242,12 +264,32 @@ nnoremap <Leader>ff :Telescope current_buffer_fuzzy_find<CR>
 nnoremap <Leader>fu :Telescope grep_string<CR>
 nnoremap <Leader>fo :Telescope oldfiles theme=get_dropdown<CR>
 
+" Debugger maps
+nnoremap <silent> <Leader>db :lua require'dap'.toggle_breakpoint()<CR>
+nnoremap <silent> <Leader>dc :lua require'dap'.continue()<CR>
+nnoremap <silent> <Leader>di :lua require'dap'.step_into()<CR>
+nnoremap <silent> <Leader>ds :lua require'dap'.step_over()<CR>
+nnoremap <silent> <Leader>do :lua require'dap'.repl.toggle()<CR>
+nnoremap <silent> <leader>dt :lua require('dap-python').test_method()<CR> :resize +10<CR>
 
+
+function! TogglePaste()
+    if(&paste == 0)
+        set paste
+        echo "Paste Mode Enabled"
+    else
+        set nopaste
+        echo "Paste Mode Disabled"
+    endif
+endfunction
+map <leader>pa :call TogglePaste()<cr>
 
 nnoremap <Leader>pb :bp<CR>
 nnoremap <Leader>nb :bn<CR>
 nnoremap <Leader>nl :lnext<CR>
 nnoremap <Leader>pl :lprevious<CR>
+nnoremap <Leader>ww :vertical resize +10<CR>
+nnoremap <Leader>ss :vertical resize -10<CR>
 
 " Saving and exiting commands
 nnoremap <Leader>wn :w<CR>
@@ -348,7 +390,6 @@ autocmd!
 " Set Numbers
 set nu
 set cursorline
-set wrap
 set ttyfast
 
 set nofoldenable
@@ -415,9 +456,6 @@ set nomodeline
 
 " * Text Formatting -- General
 
-" don't make it look like there are line breaks where there aren't:
-set nowrap
-
 " normally don't automatically format `text' as it is typed, IE only do this
 " with comments, at 79 characters:
 set formatoptions-=t
@@ -473,6 +511,13 @@ autocmd FileType html,css set noexpandtab tabstop=2
 " needed, and have indentation at 8 chars to be sure that all indents are tabs
 " (despite the mappings later):
 autocmd FileType make set noexpandtab shiftwidth=8
+
+
+autocmd BufNewFile,BufRead *.md set spell 
+autocmd BufNewFile,BufRead *.md set wrap
+autocmd BufNewFile,BufRead *.md set linebreak
+autocmd BufNewFile,BufRead *.md set nolist  " list disables linebreak
+
 
 
 " * Search & Replace
@@ -574,7 +619,7 @@ autocmd FileType python inoremap ;c class <..>:<Enter>def __init__(self, <..>):<
 autocmd FileType python inoremap ;f def <..>(<..>):<Enter><..><esc>0kt>ca<
 autocmd FileType python inoremap ;l for i in range(0, <..>):<Enter><..><esc>kt>ca<
 autocmd FileType python inoremap ;p print(f'<..>')<esc>0t>ca<
-autocmd FileType python inoremap ;m def main(argv):<Enter><..><Enter>pass<Enter><esc>I<Enter><Enter>if __name__ == "__main__":<Enter>main(sys.argv)<esc>5k0f>ca<
+autocmd FileType python inoremap ;m def main():<Enter><..><Enter>pass<Enter><esc>I<Enter><Enter>if __name__ == "__main__":<Enter>main()<esc>5k0f>ca<
 
 " C and Cpp
 autocmd BufNewFile,BufRead * if match(getline(1),"*.hpp") >= 0 | set filetype=cpp | endif
@@ -663,9 +708,7 @@ if exists('+termguicolors')
   set termguicolors
 endif
 
-
 " Neovim 0.5.0 configurations nightly
-
 lua << EOF
 vim.lsp.set_log_level("debug")
 EOF
@@ -681,7 +724,6 @@ set completeopt=menuone,noinsert,noselect
 set shortmess+=c
 let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy', 'all']
 let g:completion_matching_smart_case = 1
-
 
 lua << EOF
 
@@ -739,6 +781,7 @@ for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
 EOF
+
 
 " Use completion-nvim in every buffer
 " autocmd BufEnter * lua require'completion'.on_attach()
@@ -814,3 +857,39 @@ require'compe'.setup {
   };
 }
 EOF
+
+lua << EOF
+require('lspkind').init({with_text = true})
+EOF
+
+lua << EOF
+vim.cmd [[autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()]]
+EOF
+
+lua << EOF
+require'lsp_signature'.on_attach()
+EOF
+
+lua << EOF
+local dap = require('dap')
+dap.adapters.python = {
+  type = 'executable';
+  command = '/usr/bin/python3';
+  args = { '-m', 'debugpy.adapter' };
+}
+dap.configurations.python = {
+  {
+    type = 'python';
+    request = 'launch';
+    name = "Launch file";
+    program = "${file}";
+    pythonPath = function()
+      return '/usr/bin/python3'
+    end;
+  },
+}
+
+EOF
+
+lua require('dap-python').setup('/usr/bin/python3')
+lua require('dap-python').test_runner = 'pytest'
