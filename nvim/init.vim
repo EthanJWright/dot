@@ -1,5 +1,6 @@
 syntax on
 
+let mapleader = " "
 set guicursor=
 set nocompatible
 set noshowmatch
@@ -32,8 +33,8 @@ set updatetime=50
 set shortmess+=c
 
 " Automatically deletes all trailing whitespace and newlines at end of file on save.
-	autocmd BufWritePre * %s/\s\+$//e
-	autocmd BufWritepre * %s/\n\+\%$//e
+autocmd BufWritePre * %s/\s\+$//e
+autocmd BufWritepre * %s/\n\+\%$//e
 
 " set colorcolumn=80
 " highlight ColorColumn ctermbg=0 guibg=lightgrey
@@ -44,11 +45,13 @@ Plug 'hrsh7th/nvim-compe'
 Plug 'nvim-treesitter/nvim-treesitter'
 
 Plug 'kdav5758/TrueZen.nvim'
+set termguicolors
 
 " LSP Stuff
 Plug 'onsails/lspkind-nvim'
 Plug 'kosayoda/nvim-lightbulb'
 Plug 'ray-x/lsp_signature.nvim'
+Plug 'folke/lsp-trouble.nvim'
 
 "Debugger
 Plug 'mfussenegger/nvim-dap'
@@ -69,13 +72,13 @@ let g:nvim_tree_width_allow_resize  = 1
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'lukas-reineke/indent-blankline.nvim', {'branch': 'lua'}
 let g:indent_blankline_show_current_context = v:true
+let g:indentLine_fileTypeExclude = ['dashboard']
 Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
 " Registers
 Plug 'gennaro-tedesco/nvim-peekup'
 Plug 'tversteeg/registers.nvim'
 
-Plug 'tweekmonster/gofmt.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-jdaddy'
@@ -134,27 +137,29 @@ Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-unimpaired' " Add extra operators to [
+Plug 'tpope/vim-tbone' " tmux bidnings for vim
 Plug 'vimlab/split-term.vim'
 " JK is escape in split terminal
 tnoremap JK <C-\><C-n>
 
-Plug 'mhinz/vim-startify'
-let g:startify_change_to_dir = 0
-let g:startify_bookmarks = [
-    \ { 'i' : '~/.config/nvim/init.vim' },
-    \ ]
-let g:startify_lists = [
-          \ { 'type': 'files',     'header': ['   Files']            },
-          \ { 'type': 'dir',       'header': ['   Current Directory '. getcwd()] },
-          \ { 'type': 'sessions',  'header': ['   Sessions']       },
-          \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
-          \ ]
-let g:startify_custom_header = []
-let g:startify_custom_indices = ['h', 'j', 'k', 'l', 'H', 'J', 'K', 'L', 'a', 's', 'd', 'f', 'A', 'S', 'D', 'F']
+Plug 'glepnir/dashboard-nvim'
+let g:dashboard_default_executive ='telescope'
+let g:dashboard_custom_shortcut={
+\ 'last_session'       : 'SPC s l',
+\ 'find_history'       : 'SPC f h',
+\ 'find_file'          : 'ctrl-p',
+\ 'new_file'           : 'SPC c n',
+\ 'change_colorscheme' : 'SPC d s',
+\ 'find_word'          : 'SPC f l',
+\ 'book_marks'         : 'SPC d m',
+\ }
+
 " VIM session handling: :S sessionname to save your current session
 " ( doesn't save files ) | from outside of vim : s sessionname to open session
 function MakeSession(session)
-    execute "SSave! ". fnameescape(a:session)
+    execute "SessionSave ". fnameescape(a:session)
     execute "qa"
 endfunction
 command! -nargs=1 S call MakeSession(<f-args>)
@@ -167,10 +172,6 @@ Plug 'romgrk/barbar.nvim'
 " Commentary Changes
 autocmd FileType c setlocal commentstring=//\ %s
 
-Plug 'tpope/vim-abolish'
-Plug 'tpope/vim-unimpaired' " Add extra operators to [
-
-Plug 'tpope/vim-tbone' " tmux bidnings for vim
 Plug 'justinmk/vim-sneak' " jump to 2 char match (sxy)
 Plug 'unblevable/quick-scope'
 augroup qs_colors
@@ -178,7 +179,6 @@ augroup qs_colors
   autocmd ColorScheme * highlight QuickScopePrimary guifg='#afff5f' gui=underline ctermfg=155 cterm=underline
   autocmd ColorScheme * highlight QuickScopeSecondary guifg='#5fffff' gui=underline ctermfg=81 cterm=underline
 augroup END
-
 " Trigger a highlight in the appropriate direction when pressing these keys:
 let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 
@@ -208,6 +208,12 @@ Plug 'Th3Whit3Wolf/onebuddy'
 Plug 'flazz/vim-colorschemes'
 call plug#end()
 
+nmap <Leader>ss :<C-u>SessionSave<CR>
+nmap <Leader>sl :<C-u>SessionLoad<CR>
+nnoremap <silent> <Leader>cc :DashboardChangeColorscheme<CR>
+nnoremap <silent> <Leader>cn :DashboardNewFile<CR>
+nnoremap <silent> <Leader>dm :DashboardJumpMark<CR>
+nnoremap <silent> <Leader>rc :tabnew ~/.config/nvim/init.vim<CR>
 
 
 " SET COLORSCHEME
@@ -220,7 +226,6 @@ if executable('rg')
 endif
 
 let loaded_matchparen = 1
-let mapleader = " "
 
 let g:netrw_browse_split = 2
 let g:vrfr_rg = 'true'
@@ -255,8 +260,7 @@ nnoremap <Leader>btd :bd!<CR>
 nmap <C-P> :Telescope find_files theme=get_dropdown<CR>
 nmap <C-F> :Telescope buffers theme=get_dropdown<CR>
 nnoremap <Leader>fh :Telescope command_history theme=get_dropdown<CR>
-nnoremap <Leader>fl :Telescope current_buffer_fuzzy_find<CR>
-nnoremap <Leader>fL :Telescope live_grep<CR>
+nnoremap <Leader>fl :Telescope live_grep<CR>
 nnoremap <Leader>ft :Telescope filetypes theme=get_dropdown<CR>
 nnoremap <Leader>fc :Telescope commands theme=get_dropdown<CR>
 nnoremap <Leader>fd :Telescope lsp_document_diagnostics theme=get_dropdown<CR>
@@ -270,7 +274,7 @@ nnoremap <silent> <Leader>dc :lua require'dap'.continue()<CR>
 nnoremap <silent> <Leader>di :lua require'dap'.step_into()<CR>
 nnoremap <silent> <Leader>ds :lua require'dap'.step_over()<CR>
 nnoremap <silent> <Leader>do :lua require'dap'.repl.toggle()<CR>
-nnoremap <silent> <leader>dt :lua require('dap-python').test_method()<CR> :resize +10<CR>
+nnoremap <silent> <leader>dt :lua require('dap-python').test_method()<CR>
 
 
 function! TogglePaste()
@@ -288,15 +292,13 @@ nnoremap <Leader>pb :bp<CR>
 nnoremap <Leader>nb :bn<CR>
 nnoremap <Leader>nl :lnext<CR>
 nnoremap <Leader>pl :lprevious<CR>
-nnoremap <Leader>ww :vertical resize +10<CR>
-nnoremap <Leader>ss :vertical resize -10<CR>
 
 " Saving and exiting commands
 nnoremap <Leader>wn :w<CR>
 nnoremap <Leader>wa :wa<CR>
 nnoremap <Leader>qn :q<CR>
 nnoremap <Leader>qq :qa!<CR>
-nnoremap <leader>qa :S last<CR>
+nnoremap <leader>qa :SessionSave<CR> :qa!<CR>
 nnoremap <Leader>wq :wq<CR>
 nnoremap <leader>rr :%s/\<<C-r><C-w>\>//g<left><left>
 
@@ -893,3 +895,11 @@ EOF
 
 lua require('dap-python').setup('/usr/bin/python3')
 lua require('dap-python').test_runner = 'pytest'
+
+lua << EOF
+  require("trouble").setup {
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+  }
+EOF
