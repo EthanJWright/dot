@@ -1,7 +1,31 @@
 syntax on
+syntax enable
+set t_Co=256
+
+" Enable filetype plugins
+filetype plugin on
+filetype indent on
+
+"Always show current position
+set ruler
+
+" Ignore case when searching
+set ignorecase
+
+" have fifty lines of command-line (etc) history:
+set history=100
+" remember all of these between sessions, but only 10 search terms; also
+" remember info for 10 files, but never any on removable disks, don't remember
+" marks in files, don't rehighlight old search patterns, and only save up to
+" 100 lines of registers; including @10 in there should restrict input buffer
+" but it causes an error for me:
+set viminfo=/10,'10,r/mnt/zip,r/mnt/floppy,f0,h,\"100
 
 let mapleader = " "
 set guicursor=
+set cursorline
+set ttyfast
+set splitbelow
 set nocompatible
 set noshowmatch
 set relativenumber
@@ -12,7 +36,8 @@ set tabstop=4 softtabstop=4
 set shiftwidth=4
 set expandtab
 set smartindent
-set nu
+set number
+set number relativenumber
 set nowrap
 set smartcase
 set noswapfile
@@ -21,9 +46,45 @@ set undodir=~/.vim/undodir
 set undofile
 set termguicolors
 set scrolloff=8
+let loaded_matchparen = 1
+set nofoldenable
+set autoindent
+set foldmethod=indent
+set foldlevel=2
+set foldclose=all
+set showmatch
+set hlsearch
 
-" Give more space for displaying messages.
-set cmdheight=2
+
+" -- Navigation Remaps
+" King of all remaps
+ino jk <esc>
+
+" JK is escape in split terminal
+tnoremap JK <C-\><C-n>
+
+" Vim like pane navigation
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+" remap j k and to treat 'false' new lines as new line, also keep center
+nnoremap j gjzz
+nnoremap k gkzz
+" Also do it for all the other stuff
+nnoremap } }zz
+nnoremap { {zz
+nnoremap G Gzz
+nnoremap n nzz
+nnoremap N Nzz
+nnoremap * *zz
+nnoremap # #zz
+nnoremap g* g*zz
+nnoremap g# g#zz
+nnoremap <C-O> <C-O>zz
+nnoremap <C-I> <C-I>zz
+nnoremap <C-]> <C-]>zz
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
@@ -32,40 +93,107 @@ set updatetime=50
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
 
-" Automatically deletes all trailing whitespace and newlines at end of file on save.
-autocmd BufWritePre * %s/\s\+$//e
-autocmd BufWritepre * %s/\n\+\%$//e
+augroup highlight_yank
+    autocmd!
+    autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank("IncSearch", 50)
+augroup END
 
-" set colorcolumn=80
-" highlight ColorColumn ctermbg=0 guibg=lightgrey
+" -- Functions and Commands
+" :W sudo saves the file (no permission denied)
+command W w !sudo tee % > /dev/null
+fun! TrimWhitespace()
+    let l:save = winsaveview()
+    keeppatterns %s/\s\+$//e
+    call winrestview(l:save)
+endfun
+autocmd BufWritePre * :call TrimWhitespace()
+
+" Custom Functions
+function! TogglePaste()
+    if(&paste == 0)
+        set paste
+        echo "Paste Mode Enabled"
+    else
+        set nopaste
+        echo "Paste Mode Disabled"
+    endif
+endfunction
+map <leader>pa :call TogglePaste()<cr>
 
 call plug#begin('~/.vim/plugged')
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-compe'
-Plug 'nvim-treesitter/nvim-treesitter'
+inoremap <silent><expr> <C-Space> compe#complete()
+inoremap <silent><expr> <CR>      compe#confirm('<CR>')
+inoremap <silent><expr> <C-e>     compe#close('<C-e>')
+inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
+inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
 
-Plug 'kdav5758/TrueZen.nvim'
-set termguicolors
 
 " LSP Stuff
 Plug 'onsails/lspkind-nvim'
-Plug 'kosayoda/nvim-lightbulb'
 Plug 'ray-x/lsp_signature.nvim'
 Plug 'folke/lsp-trouble.nvim'
+nnoremap <Leader>sd :LspTroubleToggle<CR>
+
+Plug 'glepnir/lspsaga.nvim'
+Plug 'kabouzeid/nvim-lspinstall'
+Plug 'nvim-treesitter/nvim-treesitter'
 
 "Debugger
 Plug 'mfussenegger/nvim-dap'
 Plug 'mfussenegger/nvim-dap-python'
+nnoremap <silent> <Leader>db :lua require'dap'.toggle_breakpoint()<CR>
+nnoremap <silent> <Leader>dc :lua require'dap'.continue()<CR>
+nnoremap <silent> <Leader>di :lua require'dap'.step_into()<CR>
+nnoremap <silent> <Leader>ds :lua require'dap'.step_over()<CR>
+nnoremap <silent> <Leader>do :lua require'dap'.repl.toggle()<CR>
+nnoremap <silent> <leader>dt :lua require('dap-python').test_method()<CR>
 
 
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
+
+" Fuzzy Find
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzy-native.nvim'
 Plug 'nvim-telescope/telescope-symbols.nvim'
+nmap <C-F> :Telescope buffers theme=get_dropdown<CR>
+nnoremap <Leader>pp :Telescope find_files theme=get_dropdown<CR>
+nnoremap <Leader>fh :Telescope command_history theme=get_dropdown<CR>
+nnoremap <Leader>fl :Telescope live_grep<CR>
+nnoremap <Leader>ft :Telescope filetypes theme=get_dropdown<CR>
+nnoremap <Leader>fc :Telescope commands theme=get_dropdown<CR>
+nnoremap <Leader>fd :Telescope lsp_document_diagnostics theme=get_dropdown<CR>
+nnoremap <Leader>ff :Telescope current_buffer_fuzzy_find<CR>
+nnoremap <Leader>fu :Telescope grep_string<CR>
+nnoremap <Leader>fo :Telescope oldfiles theme=get_dropdown<CR>
+
 Plug 'kyazdani42/nvim-web-devicons'
 
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
+Plug 'rafamadriz/friendly-snippets'
+" Expand or jump
+imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+" Jump forward or backward
+imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+" Expand
+imap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
+smap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
+
 Plug 'kyazdani42/nvim-tree.lua'
+nnoremap <Leader>tr :NvimTreeToggle<CR><C-W><C-L>
+nnoremap <Leader>tc :NvimTreeToggle<CR> :vertical resize +30<CR><C-W><C-L>
+
+" NvimTree with LSPToggle
+nnoremap <silent> <Leader>ido :NvimTreeOpen<CR>:LspTroubleOpen<CR><C-W><C-K><C-W><C-L>
+nnoremap <silent> <Leader>ido :NvimTreeOpen<CR>:LspTroubleOpen<CR><C-W><C-K><C-W><C-L>
+nnoremap <silent> <Leader>idc :NvimTreeClose<CR>:LspTroubleClose<CR>
 let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache' ] "empty by default
 let g:nvim_tree_width_allow_resize  = 1
 
@@ -74,16 +202,27 @@ Plug 'lukas-reineke/indent-blankline.nvim', {'branch': 'lua'}
 let g:indent_blankline_show_current_context = v:true
 let g:indentLine_fileTypeExclude = ['dashboard']
 Plug 'godlygeek/tabular'
+nnoremap <Leader>tf :Tabularize /\|<CR>
+
 Plug 'plasticboy/vim-markdown'
 " Registers
 Plug 'gennaro-tedesco/nvim-peekup'
 Plug 'tversteeg/registers.nvim'
 
+" Git
+Plug 'TimUntersberger/neogit'
+" Sweet Sweet FuGITive
 Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-eunuch'
-Plug 'tpope/vim-jdaddy'
 Plug 'idanarye/vim-merginal'
+nmap <leader>gs :Neogit<CR>
+nmap <leader>gc :Git commit<CR>
+nmap <leader>ga :Git add --all<CR>
+nmap <leader>gm :MerginalToggle <CR>
+nnoremap <Leader>gb :Telescope git_branches<CR>
+nmap <leader>gp :Git -c push.default=current push<CR>
+
 Plug 'mbbill/undotree'
+nnoremap <leader>u :UndotreeToggle<CR>
 
 Plug 'sheerun/vim-polyglot'
 " --- vim go (polyglot) settings.
@@ -111,66 +250,66 @@ nnoremap <Leader>lc :VimtexCompile <CR>
 " On-demand lazy load
 Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
 nnoremap <silent> <leader> :WhichKey ' '<CR>
-set timeoutlen=500
+set timeoutlen=1000
 
 Plug 'majutsushi/tagbar'
+nnoremap <Leader>ta :TagbarToggle<CR>
+nnoremap <Leader>tj :TagbarOpen fj<CR>
+
 "TagBar Remap
 map <C-t> :TagbarToggle<CR>
 command T TagbarOpen<Space>j
 let g:tagbar_compact = 1
-Plug 'vim-scripts/ZoomWin'
-Plug 'junegunn/goyo.vim'
-let g:goyo_width=120
-function! s:goyo_enter()
-    :set number
-    :set relativenumber
-endfunction
-autocmd! User GoyoEnter nested call <SID>goyo_enter()
+Plug 'szw/vim-maximizer'
+nnoremap <Leader>oo :MaximizerToggle<CR>
 
 Plug 'wesQ3/vim-windowswap'
 Plug 'kana/vim-textobj-user'
 Plug 'kana/vim-textobj-function'
-Plug 'mhinz/vim-signify'
-" Plug 'ludovicchabant/vim-gutentags'
+Plug 'lewis6991/gitsigns.nvim'
+Plug 'ludovicchabant/vim-gutentags'
+command! MakeTags !ctags -R .
+
 Plug 'szw/vim-g'
+xnoremap <leader>lo :Google <CR>
+
+" The Pope
+Plug 'tpope/vim-eunuch'
+Plug 'tpope/vim-jdaddy'
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-commentary'
+autocmd FileType c setlocal commentstring=//\ %s
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-unimpaired' " Add extra operators to [
 Plug 'tpope/vim-tbone' " tmux bidnings for vim
+
 Plug 'vimlab/split-term.vim'
-" JK is escape in split terminal
-tnoremap JK <C-\><C-n>
 
 Plug 'glepnir/dashboard-nvim'
 let g:dashboard_default_executive ='telescope'
 let g:dashboard_custom_shortcut={
 \ 'last_session'       : 'SPC s l',
-\ 'find_history'       : 'SPC f h',
+\ 'find_history'       : 'SPC f o',
 \ 'find_file'          : 'ctrl-p',
 \ 'new_file'           : 'SPC c n',
 \ 'change_colorscheme' : 'SPC d s',
 \ 'find_word'          : 'SPC f l',
 \ 'book_marks'         : 'SPC d m',
 \ }
-
-" VIM session handling: :S sessionname to save your current session
-" ( doesn't save files ) | from outside of vim : s sessionname to open session
-function MakeSession(session)
-    execute "SessionSave ". fnameescape(a:session)
-    execute "qa"
-endfunction
-command! -nargs=1 S call MakeSession(<f-args>)
+nnoremap <silent> <Leader>rc :tabnew ~/.config/nvim/init.vim<CR>
+nmap <Leader>ss :<C-u>SessionSave<CR>
+nmap <Leader>sl :<C-u>SessionLoad<CR>
+nnoremap <silent> <Leader>cc :DashboardChangeColorscheme<CR>
+nnoremap <silent> <Leader>cn :DashboardNewFile<CR>
+nnoremap <silent> <Leader>dm :DashboardJumpMark<CR>
 
 Plug 'npxbr/glow.nvim', {'do': ':GlowInstall'}
+nmap <Leader>md :Glow<CR>
 
-Plug 'vim-scripts/Tabmerge'
-Plug 'romgrk/barbar.nvim'
-
-" Commentary Changes
-autocmd FileType c setlocal commentstring=//\ %s
+Plug 'vim-scripts/Tabmerge' " merge tabs into panes
+nnoremap <Leader>tm :Tabmerge right<CR>
 
 Plug 'justinmk/vim-sneak' " jump to 2 char match (sxy)
 Plug 'unblevable/quick-scope'
@@ -179,7 +318,6 @@ augroup qs_colors
   autocmd ColorScheme * highlight QuickScopePrimary guifg='#afff5f' gui=underline ctermfg=155 cterm=underline
   autocmd ColorScheme * highlight QuickScopeSecondary guifg='#5fffff' gui=underline ctermfg=81 cterm=underline
 augroup END
-" Trigger a highlight in the appropriate direction when pressing these keys:
 let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 
 
@@ -194,255 +332,51 @@ Plug 'savq/melange'
 Plug 'yonlu/omni.vim'
 Plug 'gruvbox-community/gruvbox'
 let g:gruvbox_contrast_dark = 'hard'
+let g:gruvbox_invert_selection='0'
 if exists('+termguicolors')
     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 endif
-
-let g:gruvbox_invert_selection='0'
 Plug 'gerardbm/vim-atomic'
 Plug 'sainnhe/gruvbox-material'
 Plug 'phanviet/vim-monokai-pro'
 Plug 'tjdevries/colorbuddy.vim'
 Plug 'Th3Whit3Wolf/onebuddy'
 Plug 'flazz/vim-colorschemes'
+Plug 'svermeulen/vim-yoink'
+nmap <c-n> <plug>(YoinkPostPasteSwapBack)
+nmap <c-p> <plug>(YoinkPostPasteSwapForward)
+nmap p <plug>(YoinkPaste_p)
+nmap P <plug>(YoinkPaste_P)
 call plug#end()
-
-nmap <Leader>ss :<C-u>SessionSave<CR>
-nmap <Leader>sl :<C-u>SessionLoad<CR>
-nnoremap <silent> <Leader>cc :DashboardChangeColorscheme<CR>
-nnoremap <silent> <Leader>cn :DashboardNewFile<CR>
-nnoremap <silent> <Leader>dm :DashboardJumpMark<CR>
-nnoremap <silent> <Leader>rc :tabnew ~/.config/nvim/init.vim<CR>
-
 
 " SET COLORSCHEME
 luafile ~/.config/nvim/eviline.lua
 " lua require('colorbuddy').colorscheme('onebuddy')
 colorscheme tokyonight
 
-if executable('rg')
-    let g:rg_derive_root='true'
-endif
-
-let loaded_matchparen = 1
-
-let g:netrw_browse_split = 2
-let g:vrfr_rg = 'true'
-let g:netrw_banner = 0
-let g:netrw_winsize = 25
-
-nmap <Leader>md :Glow<CR>
-nnoremap <Leader>tr :NvimTreeToggle<CR><C-W><C-L>
-nnoremap <Leader>tc :NvimTreeToggle<CR> :vertical resize +30<CR><C-W><C-L>
-nnoremap <Leader>tt :tabnew<CR>:Startify<CR>
-nnoremap <Leader>tm :Tabmerge right<CR>
-nnoremap <Leader>ta :TagbarToggle<CR>
-nnoremap <Leader>tf :Tabularize /\|<CR>
-nnoremap <Leader>tj :TagbarOpen fj<CR>
-nnoremap <leader>phw :h <C-R>=expand("<cword>")<CR><CR>
-nnoremap <leader>u :UndotreeToggle<CR>
-nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
-nnoremap <Leader>ps :Rg<SPACE>
+" General Leader
 nnoremap <Leader><CR> :so ~/.config/nvim/init.vim<CR>
+nnoremap <Leader>tt :tabnew<CR>
 nnoremap <Leader>> :vertical resize +15<CR>
 nnoremap <Leader>< :vertical resize -15<CR>
 nnoremap <Leader>vs :vs<CR>
+nnoremap <Leader>sp :sp<CR>
 nnoremap <Leader>vt :VTerm<CR>
 nnoremap <Leader>te :Term<CR>
 nnoremap <Leader>to :term<CR>
-
-nnoremap <Leader>sp :sp<CR>
-nnoremap <Leader>bd :bd<CR>
-nnoremap <Leader>btd :bd!<CR>
-
-" FZF mappings
-nmap <C-P> :Telescope find_files theme=get_dropdown<CR>
-nmap <C-F> :Telescope buffers theme=get_dropdown<CR>
-nnoremap <Leader>fh :Telescope command_history theme=get_dropdown<CR>
-nnoremap <Leader>fl :Telescope live_grep<CR>
-nnoremap <Leader>ft :Telescope filetypes theme=get_dropdown<CR>
-nnoremap <Leader>fc :Telescope commands theme=get_dropdown<CR>
-nnoremap <Leader>fd :Telescope lsp_document_diagnostics theme=get_dropdown<CR>
-nnoremap <Leader>ff :Telescope current_buffer_fuzzy_find<CR>
-nnoremap <Leader>fu :Telescope grep_string<CR>
-nnoremap <Leader>fo :Telescope oldfiles theme=get_dropdown<CR>
-
-" Debugger maps
-nnoremap <silent> <Leader>db :lua require'dap'.toggle_breakpoint()<CR>
-nnoremap <silent> <Leader>dc :lua require'dap'.continue()<CR>
-nnoremap <silent> <Leader>di :lua require'dap'.step_into()<CR>
-nnoremap <silent> <Leader>ds :lua require'dap'.step_over()<CR>
-nnoremap <silent> <Leader>do :lua require'dap'.repl.toggle()<CR>
-nnoremap <silent> <leader>dt :lua require('dap-python').test_method()<CR>
-
-
-function! TogglePaste()
-    if(&paste == 0)
-        set paste
-        echo "Paste Mode Enabled"
-    else
-        set nopaste
-        echo "Paste Mode Disabled"
-    endif
-endfunction
-map <leader>pa :call TogglePaste()<cr>
-
-nnoremap <Leader>pb :bp<CR>
-nnoremap <Leader>nb :bn<CR>
-nnoremap <Leader>nl :lnext<CR>
-nnoremap <Leader>pl :lprevious<CR>
 
 " Saving and exiting commands
 nnoremap <Leader>wn :w<CR>
 nnoremap <Leader>wa :wa<CR>
 nnoremap <Leader>qn :q<CR>
 nnoremap <Leader>qq :qa!<CR>
-nnoremap <leader>qa :SessionSave<CR> :qa!<CR>
+nnoremap <silent><leader>qa :SessionSave<CR>:qa!<CR>
 nnoremap <Leader>wq :wq<CR>
+
+" rename if LSP doesn't support (in file)
 nnoremap <leader>rr :%s/\<<C-r><C-w>\>//g<left><left>
 
-nnoremap <Leader>rp :resize 100<CR>
-
-function! s:check_back_space() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" Google Mappings
-xnoremap <leader>lo :Google <CR>
-
-" Sweet Sweet FuGITive
-nmap <leader>gh :diffget //3<CR>
-nmap <leader>gu :diffget //2<CR>
-nmap <leader>gdd :Git diff<cr>
-nmap <leader>gds :Gdiffsplit<cr>
-nmap <leader>gs :G<CR>
-nmap <leader>gc :Git commit<CR>
-nmap <leader>ga :Git add --all<CR>
-nmap <leader>gm :MerginalToggle <CR>
-nnoremap <Leader>gb :Telescope git_branches<CR>
-nmap <leader>gp :Git -c push.default=current push<CR>
-nmap <leader>gs :G<CR>
-" Jump though hunks
-nmap <leader>gj <plug>(signify-next-hunk)
-nmap <leader>gk <plug>(signify-prev-hunk)
-nmap <leader>gJ 9999<leader>gJ
-nmap <leader>gK 9999<leader>gk
-
-fun! TrimWhitespace()
-    let l:save = winsaveview()
-    keeppatterns %s/\s\+$//e
-    call winrestview(l:save)
-endfun
-
-augroup highlight_yank
-    autocmd!
-    autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank("IncSearch", 50)
-augroup END
-
-autocmd BufWritePre * :call TrimWhitespace()
-
-
-set number relativenumber
-
-command! MakeTags !ctags -R .
-
-" // to search for currently selected text
-vnoremap // y/<C-R>"<CR>"
-
-" remap j k and to treat 'false' new lines as new line, also keep center
-nnoremap j gjzz
-nnoremap k gkzz
-" Also do it for all the other stuff
-nnoremap } }zz
-nnoremap { {zz
-nnoremap G Gzz
-nnoremap n nzz
-nnoremap N Nzz
-nnoremap * *zz
-nnoremap # #zz
-nnoremap g* g*zz
-nnoremap g# g#zz
-nnoremap <C-O> <C-O>zz
-nnoremap <C-I> <C-I>zz
-nnoremap <C-]> <C-]>zz
-
-" King of all remaps
-ino jk <esc>
-
-" Vim like pane navigation
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
-
-nnoremap + :exe "resize " . (winheight(0) * 3/2)<CR>
-nnoremap - :exe "resize " . (winheight(0) * 2/3)<CR>
-
-
-inoremap ;; <Esc>/<..><Enter>"_c4l
-
-syntax on
-set t_Co=256
-
-
-" first clear any existing autocommands:
-autocmd!
-" Set Numbers
-set nu
-set cursorline
-set ttyfast
-
-set nofoldenable
-set foldmethod=indent
-set foldlevel=2
-set foldclose=all
-
-set smartindent
-"Set tab spacing to 4
-set tabstop=4
-set softtabstop=4
-set expandtab
-set shiftwidth=4
-set autoindent
-
-"enable syntax processing
-syntax enable
-
-set showmatch
-set hlsearch
-
-" :W sudo saves the file (no permission denied)
-command W w !sudo tee % > /dev/null
-
-" Enable filetype plugins
-filetype plugin on
-filetype indent on
-
-"Always show current position
-set ruler
-
-" Ignore case when searching
-set ignorecase
-
-
-" have fifty lines of command-line (etc) history:
-set history=50
-" remember all of these between sessions, but only 10 search terms; also
-" remember info for 10 files, but never any on removable disks, don't remember
-" marks in files, don't rehighlight old search patterns, and only save up to
-" 100 lines of registers; including @10 in there should restrict input buffer
-" but it causes an error for me:
-set viminfo=/10,'10,r/mnt/zip,r/mnt/floppy,f0,h,\"100
-
-" have command-line completion <Tab> (for filenames, help topics, option names)
-" first list the available options and complete the longest common part, then
-" have further <Tab>s cycle through the possibilities:
-set wildmode=list:longest,full
-
-" use "[RO]" for "[readonly]" to save space in the message line:
-set shortmess+=r
 
 " display the current mode and partially-typed commands in the status line:
 set showmode
@@ -515,7 +449,7 @@ autocmd FileType html,css set noexpandtab tabstop=2
 autocmd FileType make set noexpandtab shiftwidth=8
 
 
-autocmd BufNewFile,BufRead *.md set spell 
+autocmd BufNewFile,BufRead *.md set spell
 autocmd BufNewFile,BufRead *.md set wrap
 autocmd BufNewFile,BufRead *.md set linebreak
 autocmd BufNewFile,BufRead *.md set nolist  " list disables linebreak
@@ -602,6 +536,7 @@ syntax on
 " Add custom filling in of printing, classes, functions, etc. based on the language
 "
 " General
+inoremap ;; <Esc>/<..><Enter>"_c4l
 inoremap ;k "<..>" : <..>,<esc>0f>ca<
 inoremap ;M :vnew \| 0read !
 
@@ -711,30 +646,30 @@ if exists('+termguicolors')
 endif
 
 " Neovim 0.5.0 configurations nightly
-lua << EOF
-vim.lsp.set_log_level("debug")
-EOF
-
 " Use <Tab> and <S-Tab> to navigate through popup menu
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 " Set completeopt to have a better completion experience
-set completeopt=menuone,noinsert,noselect
+set completeopt=menuone,noselect
 
 " Avoid showing message extra message when using completion
 set shortmess+=c
-let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy', 'all']
+let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
 let g:completion_matching_smart_case = 1
 
 lua << EOF
 
 local nvim_lsp = require('lspconfig')
+
+
 local on_attach = function(client, bufnr)
+
+
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
-  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+  -- buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
   -- Mappings.
   local opts = { noremap=true, silent=true }
@@ -779,15 +714,22 @@ end
 -- Use a loop to conveniently both setup defined servers
 -- and map buffer local keybindings when the language server attaches
 local servers = {"pyright", "pyls","rust_analyzer", "tsserver" }
+
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+capabilities.textDocument.completion.completionItem.resolveSupport = {
+  properties = {
+    'documentation',
+    'detail',
+    'additionalTextEdits',
+  }
+}
+
 for _, lsp in ipairs(servers) do
-  nvim_lsp[lsp].setup { on_attach = on_attach }
+  nvim_lsp[lsp].setup { capabilities = capabilities, on_attach = on_attach }
 end
 EOF
-
-
-" Use completion-nvim in every buffer
-" autocmd BufEnter * lua require'completion'.on_attach()
-
 
 " Telescope Configuration
 lua << EOF
@@ -838,7 +780,7 @@ lua << EOF
 require'compe'.setup {
   enabled = true;
   autocomplete = true;
-  debug = false;
+  debug = true;
   min_length = 1;
   preselect = 'enable';
   throttle_time = 80;
@@ -862,10 +804,6 @@ EOF
 
 lua << EOF
 require('lspkind').init({with_text = true})
-EOF
-
-lua << EOF
-vim.cmd [[autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()]]
 EOF
 
 lua << EOF
@@ -902,4 +840,22 @@ lua << EOF
     -- or leave it empty to use the default settings
     -- refer to the configuration section below
   }
+EOF
+
+lua << EOF
+local saga = require 'lspsaga'
+saga.init_lsp_saga({
+    error_sign = '',
+    warn_sign = '',
+    hint_sign = '',
+})
+EOF
+
+lua << EOF
+require('gitsigns').setup()
+EOF
+
+lua << EOF
+local neogit = require('neogit')
+neogit.setup {}
 EOF
