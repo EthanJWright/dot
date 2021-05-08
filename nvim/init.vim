@@ -1,97 +1,10 @@
-syntax on
-syntax enable
-set t_Co=256
-
-" Enable filetype plugins
-filetype plugin on
-filetype indent on
-
-"Always show current position
-set ruler
-
-" Ignore case when searching
-set ignorecase
-
-" have fifty lines of command-line (etc) history:
-set history=100
-" remember all of these between sessions, but only 10 search terms; also
-" remember info for 10 files, but never any on removable disks, don't remember
-" marks in files, don't rehighlight old search patterns, and only save up to
-" 100 lines of registers; including @10 in there should restrict input buffer
-" but it causes an error for me:
-set viminfo=/10,'10,r/mnt/zip,r/mnt/floppy,f0,h,\"100
-
-let mapleader = " "
-set guicursor=
-set cursorline
-set ttyfast
-set splitbelow
-set nocompatible
-set noshowmatch
-set relativenumber
-set nohlsearch
-set hidden
-set noerrorbells
-set tabstop=4 softtabstop=4
-set shiftwidth=4
-set expandtab
-set smartindent
-set number
-set number relativenumber
-set nowrap
-set smartcase
-set noswapfile
-set nobackup
-set undodir=~/.vim/undodir
-set undofile
-set termguicolors
-set scrolloff=8
-let loaded_matchparen = 1
-set nofoldenable
-set autoindent
-set foldmethod=indent
-set foldlevel=2
-set foldclose=all
-set showmatch
-set hlsearch
+source $HOME/.config/nvim/general/settings.vim
+source $HOME/.config/nvim/keys/mappings.vim
+source $HOME/.config/nvim/snippets/bindings.vim
+source $HOME/.config/nvim/commands/auto.vim
+source $HOME/.config/nvim/commands/functions.vim
 
 
-" -- Navigation Remaps
-" King of all remaps
-ino jk <esc>
-
-" JK is escape in split terminal
-tnoremap JK <C-\><C-n>
-
-" Vim like pane navigation
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
-
-" remap j k and to treat 'false' new lines as new line, also keep center
-nnoremap j gjzz
-nnoremap k gkzz
-" Also do it for all the other stuff
-nnoremap } }zz
-nnoremap { {zz
-nnoremap G Gzz
-nnoremap n nzz
-nnoremap N Nzz
-nnoremap * *zz
-nnoremap # #zz
-nnoremap g* g*zz
-nnoremap g# g#zz
-nnoremap <C-O> <C-O>zz
-nnoremap <C-I> <C-I>zz
-nnoremap <C-]> <C-]>zz
-
-" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
-" delays and poor user experience.
-set updatetime=50
-
-" Don't pass messages to |ins-completion-menu|.
-set shortmess+=c
 
 augroup highlight_yank
     autocmd!
@@ -129,17 +42,25 @@ inoremap <silent><expr> <C-e>     compe#close('<C-e>')
 inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
 inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
 
-
 " LSP Stuff
+Plug 'nvim-lua/popup.nvim'
+Plug 'alexaandru/nvim-lspupdate'
 Plug 'onsails/lspkind-nvim'
 Plug 'ray-x/lsp_signature.nvim'
 Plug 'folke/lsp-trouble.nvim'
+Plug 'folke/lsp-colors.nvim'
 nnoremap <Leader>sd :LspTroubleToggle<CR>
-
 Plug 'glepnir/lspsaga.nvim'
+nnoremap <silent> gh <cmd>lua require'lspsaga.provider'.lsp_finder()<CR>
+nnoremap <silent> K <cmd>lua require('lspsaga.hover').render_hover_doc()<CR>
+nnoremap <silent> sh <cmd>lua require('lspsaga.signaturehelp').signature_help()<CR>
 Plug 'kabouzeid/nvim-lspinstall'
 Plug 'nvim-treesitter/nvim-treesitter'
 
+Plug 'kosayoda/nvim-lightbulb'
+Plug 'simrat39/symbols-outline.nvim'
+
+Plug 'nvim-lua/plenary.nvim'
 "Debugger
 Plug 'mfussenegger/nvim-dap'
 Plug 'mfussenegger/nvim-dap-python'
@@ -150,9 +71,7 @@ nnoremap <silent> <Leader>ds :lua require'dap'.step_over()<CR>
 nnoremap <silent> <Leader>do :lua require'dap'.repl.toggle()<CR>
 nnoremap <silent> <leader>dt :lua require('dap-python').test_method()<CR>
 
-
-Plug 'nvim-lua/popup.nvim'
-Plug 'nvim-lua/plenary.nvim'
+Plug 'keith/swift.vim'
 
 " Fuzzy Find
 Plug 'nvim-telescope/telescope.nvim'
@@ -168,6 +87,8 @@ nnoremap <Leader>fd :Telescope lsp_document_diagnostics theme=get_dropdown<CR>
 nnoremap <Leader>ff :Telescope current_buffer_fuzzy_find<CR>
 nnoremap <Leader>fu :Telescope grep_string<CR>
 nnoremap <Leader>fo :Telescope oldfiles theme=get_dropdown<CR>
+nnoremap <silent><leader>ca :Lspsaga code_action<CR>
+vnoremap <silent><leader>ca :<C-U>Lspsaga range_code_action<CR>
 
 Plug 'kyazdani42/nvim-web-devicons'
 
@@ -200,14 +121,14 @@ let g:nvim_tree_width_allow_resize  = 1
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'lukas-reineke/indent-blankline.nvim', {'branch': 'lua'}
 let g:indent_blankline_show_current_context = v:true
-let g:indentLine_fileTypeExclude = ['dashboard']
+let g:indentLine_fileTypeExclude = ['dashboard', '*.vim', 'term']
 Plug 'godlygeek/tabular'
 nnoremap <Leader>tf :Tabularize /\|<CR>
 
 Plug 'plasticboy/vim-markdown'
 " Registers
 Plug 'gennaro-tedesco/nvim-peekup'
-Plug 'tversteeg/registers.nvim'
+" Plug 'tversteeg/registers.nvim'
 
 " Git
 Plug 'TimUntersberger/neogit'
@@ -224,33 +145,13 @@ nmap <leader>gp :Git -c push.default=current push<CR>
 Plug 'mbbill/undotree'
 nnoremap <leader>u :UndotreeToggle<CR>
 
-Plug 'sheerun/vim-polyglot'
-" --- vim go (polyglot) settings.
-let g:go_highlight_build_constraints = 1
-let g:go_highlight_extra_types = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_structs = 1
-let g:go_highlight_types = 1
-let g:go_highlight_function_parameters = 1
-let g:go_highlight_function_calls = 1
-let g:go_highlight_generate_tags = 1
-let g:go_highlight_format_strings = 1
-let g:go_highlight_variable_declarations = 1
-let g:go_auto_sameids = 1
-
 Plug 'jiangmiao/auto-pairs'
+
 Plug 'lervag/vimtex'
 let g:tex_flavor = 'latex'
 Plug 'xuhdev/vim-latex-live-preview', {'for': 'tex'}
-nnoremap <Leader>lc :VimtexCompile <CR>
-"
-" On-demand lazy load
-Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
-nnoremap <silent> <leader> :WhichKey ' '<CR>
-set timeoutlen=1000
+
+Plug 'folke/which-key.nvim'
 
 Plug 'majutsushi/tagbar'
 nnoremap <Leader>ta :TagbarToggle<CR>
@@ -258,7 +159,6 @@ nnoremap <Leader>tj :TagbarOpen fj<CR>
 
 "TagBar Remap
 map <C-t> :TagbarToggle<CR>
-command T TagbarOpen<Space>j
 let g:tagbar_compact = 1
 Plug 'szw/vim-maximizer'
 nnoremap <Leader>oo :MaximizerToggle<CR>
@@ -270,8 +170,22 @@ Plug 'lewis6991/gitsigns.nvim'
 Plug 'ludovicchabant/vim-gutentags'
 command! MakeTags !ctags -R .
 
+Plug 'andweeb/presence.nvim'
+
 Plug 'szw/vim-g'
 xnoremap <leader>lo :Google <CR>
+
+Plug 'kevinhwang91/nvim-hlslens'
+noremap <silent> n <Cmd>execute('normal! ' . v:count1 . 'n')<CR>
+            \<Cmd>lua require('hlslens').start()<CR>
+noremap <silent> N <Cmd>execute('normal! ' . v:count1 . 'N')<CR>
+            \<Cmd>lua require('hlslens').start()<CR>
+noremap * *<Cmd>lua require('hlslens').start()<CR>
+noremap # #<Cmd>lua require('hlslens').start()<CR>
+noremap g* g*<Cmd>lua require('hlslens').start()<CR>
+noremap g# g#<Cmd>lua require('hlslens').start()<CR>
+
+Plug 'b3nj5m1n/kommentary'
 
 " The Pope
 Plug 'tpope/vim-eunuch'
@@ -279,35 +193,38 @@ Plug 'tpope/vim-jdaddy'
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-commentary'
-autocmd FileType c setlocal commentstring=//\ %s
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-unimpaired' " Add extra operators to [
 Plug 'tpope/vim-tbone' " tmux bidnings for vim
 
+Plug 'dag/vim-fish'
 Plug 'vimlab/split-term.vim'
+Plug 'numToStr/FTerm.nvim'
 
 Plug 'glepnir/dashboard-nvim'
 let g:dashboard_default_executive ='telescope'
 let g:dashboard_custom_shortcut={
 \ 'last_session'       : 'SPC s l',
 \ 'find_history'       : 'SPC f o',
-\ 'find_file'          : 'ctrl-p',
+\ 'find_file'          : 'SPC p p',
 \ 'new_file'           : 'SPC c n',
-\ 'change_colorscheme' : 'SPC d s',
+\ 'change_colorscheme' : 'SPC c c',
 \ 'find_word'          : 'SPC f l',
-\ 'book_marks'         : 'SPC d m',
+\ 'book_marks'         : 'SPC b m',
 \ }
 nnoremap <silent> <Leader>rc :tabnew ~/.config/nvim/init.vim<CR>
 nmap <Leader>ss :<C-u>SessionSave<CR>
 nmap <Leader>sl :<C-u>SessionLoad<CR>
 nnoremap <silent> <Leader>cc :DashboardChangeColorscheme<CR>
 nnoremap <silent> <Leader>cn :DashboardNewFile<CR>
-nnoremap <silent> <Leader>dm :DashboardJumpMark<CR>
+nnoremap <silent> <Leader>bm :DashboardJumpMark<CR>
 
 Plug 'npxbr/glow.nvim', {'do': ':GlowInstall'}
 nmap <Leader>md :Glow<CR>
 
+Plug 'romgrk/barbar.nvim'
+nnoremap <silent> <Leader>bn :bnext<CR>
+nnoremap <silent> <Leader>bp :bprev<CR>
 Plug 'vim-scripts/Tabmerge' " merge tabs into panes
 nnoremap <Leader>tm :Tabmerge right<CR>
 
@@ -327,6 +244,14 @@ Plug 'glepnir/galaxyline.nvim' , {'branch': 'main'}
 " Colorschemes
 Plug 'pineapplegiant/spaceduck', { 'branch': 'main' }
 Plug 'folke/tokyonight.nvim'
+let g:tokyonight_style = 'night'
+let g:tokyonight_italic_functions = "true"
+Plug 'folke/material.nvim'
+let g:material_style = 'palenight'
+let g:material_flat_ui=1
+Plug 'marko-cerovac/material.nvim'
+Plug 'tiagovla/tokyodark.nvim'
+let g:tokyodark_enable_italic = 1
 Plug 'chuling/equinusocio-material.vim'
 Plug 'savq/melange'
 Plug 'yonlu/omni.vim'
@@ -338,6 +263,7 @@ if exists('+termguicolors')
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 endif
 Plug 'gerardbm/vim-atomic'
+Plug '1612492/github.vim'
 Plug 'sainnhe/gruvbox-material'
 Plug 'phanviet/vim-monokai-pro'
 Plug 'tjdevries/colorbuddy.vim'
@@ -363,295 +289,25 @@ nnoremap <Leader>< :vertical resize -15<CR>
 nnoremap <Leader>vs :vs<CR>
 nnoremap <Leader>sp :sp<CR>
 nnoremap <Leader>vt :VTerm<CR>
-nnoremap <Leader>te :Term<CR>
+nnoremap <Leader>jj :lua require("FTerm").toggle()<CR>
+tnoremap JJ <C-\><C-n>:lua require("FTerm").toggle()<CR>
+
 nnoremap <Leader>to :term<CR>
+nnoremap <Leader>tp :Term<CR>
 
 " Saving and exiting commands
-nnoremap <Leader>wn :w<CR>
+nnoremap <Leader>wn :write<CR>
 nnoremap <Leader>wa :wa<CR>
 nnoremap <Leader>qn :q<CR>
 nnoremap <Leader>qq :qa!<CR>
 nnoremap <silent><leader>qa :SessionSave<CR>:qa!<CR>
 nnoremap <Leader>wq :wq<CR>
 
-" rename if LSP doesn't support (in file)
-nnoremap <leader>rr :%s/\<<C-r><C-w>\>//g<left><left>
-
-
-" display the current mode and partially-typed commands in the status line:
-set showmode
-set showcmd
-
-" when using list, keep tabs at their full width and display `arrows':
-execute 'set listchars+=tab:' . nr2char(187) . nr2char(183)
-" (Character 187 is a right double-chevron, and 183 a mid-dot.)
-
-" don't have files trying to override this .vimrc:
-set nomodeline
-
-
-" * Text Formatting -- General
-
-" normally don't automatically format `text' as it is typed, IE only do this
-" with comments, at 79 characters:
-set formatoptions-=t
-set textwidth=79
-
-" treat lines starting with a quote mark as comments (for `Vim' files, such as
-" this very one!), and colons as well so that reformatting usenet messages from
-" `Tin' users works OK:
-set comments+=b:\"
-set comments+=n::
-
-
-" * Text Formatting -- Specific File Formats
-
-" enable filetype detection:
-"filetype on
-
-" anything at all with a .txt extension as being human-language text [this clobbers the
-" `help' filetype, but that doesn't seem to prevent help from working
-" properly]:
-augroup filetype
-  autocmd BufNewFile,BufRead *.txt set filetype=human
-  autocmd BufNewFile,BufRead *.tex set filetype=human
-augroup END
-
-
-" in human-language files, automatically format everything at 72 chars:
-autocmd FileType mail,human set formatoptions+=t textwidth=72
-
-" for C-like programming, have automatic indentation:
-autocmd FileType c,cpp,slang set cindent
-
-" for actual C (not C++) programming where comments have explicit end
-" characters, if starting a new line in the middle of a comment automatically
-" insert the comment leader characters:
-autocmd FileType c set formatoptions+=ro
-
-" for Perl programming, have things in braces indenting themselves:
-autocmd FileType perl set smartindent
-
-" for CSS, also have things in braces indented:
-autocmd FileType css set smartindent
-
-" for HTML, generally format text, but if a long line has been created leave it
-" alone when editing:
-autocmd FileType html set formatoptions+=tl
-
-" for both CSS and HTML, use genuine tab characters for indentation, to make
-" files a few bytes smaller:
-autocmd FileType html,css set noexpandtab tabstop=2
-
-" in makefiles, don't expand tabs to spaces, since actual tab characters are
-" needed, and have indentation at 8 chars to be sure that all indents are tabs
-" (despite the mappings later):
-autocmd FileType make set noexpandtab shiftwidth=8
-
-
-autocmd BufNewFile,BufRead *.md set spell
-autocmd BufNewFile,BufRead *.md set wrap
-autocmd BufNewFile,BufRead *.md set linebreak
-autocmd BufNewFile,BufRead *.md set nolist  " list disables linebreak
-
-
-
-" * Search & Replace
-
-" make searches case-insensitive, unless they contain upper-case letters:
-set ignorecase
-set smartcase
-
-" show the `best match so far' as search strings are typed:
-set incsearch
-
-" assume the /g flag on :s substitutions to replace all matches in a line:
-set gdefault
-
-
-" * Keystrokes -- Moving Around
-
-" have the h and l cursor keys wrap between lines (like <Space> and <BkSpc> do
-" by default), and ~ covert case over line breaks; also have the cursor keys
-" wrap in insert mode:
-set whichwrap=h,l,~,[,]
-
-" have % bounce between angled brackets, as well as t'other kinds:
-set matchpairs+=<:>
-
-" have <F1> prompt for a help topic, rather than displaying the introduction
-" page, and have it do this from any mode:
-nnoremap <F1> :help<Space>
-vmap <F1> <C-C><F1>
-omap <F1> <C-C><F1>
-map! <F1> <C-C><F1>
-
-
-" * Keystrokes -- Formatting
-" have the usual indentation keystrokes still work in visual mode:
-vnoremap <C-T> >
-vnoremap <C-D> <LT>
-vmap <Tab> <C-T>
-vmap <S-Tab> <C-D>
-
-" have Y behave analogously to D and C rather than to dd and cc (which is
-" already done by yy):
-noremap Y y$
-
-
-" * Keystrokes -- Toggles
-
-" Keystrokes to toggle options are defined here.  They are all set to normal
-" mode keystrokes beginning \t but some function keys (which won't work in all
-" terminals) are also mapped.
-
-nmap <F4> :windo set scb!<CR>
-
-"" have \tf ("toggle format") toggle the automatic insertion of line breaks
-"" during typing and report the change:
-"nnoremap \tf :if &fo =~ 't' <Bar> set fo-=t <Bar> else <Bar> set fo+=t <Bar>
-"  \ endif <Bar> set fo?<CR>
-"nmap <F3> \tf
-"imap <F3> <C-O>\tf
-"
-" have \tl ("toggle list") toggle list on/off and report the change:
-nnoremap \tl :set invlist list?<CR>
-nmap <F2> \tl
-
-" have <L>th ("toggle highlight") toggle highlighting of search matches, and
-" report the change:
-nnoremap <Leader>th :set invhls hls?<CR>
-
-
-" * Keystrokes -- Insert Mode
-
-" allow <BkSpc> to delete line breaks, beyond the start of the current
-" insertion, and over indentations:
-set backspace=eol,start,indent
-
-syntax on
-
-
-
-" Add custom filling in of printing, classes, functions, etc. based on the language
-"
-" General
-inoremap ;; <Esc>/<..><Enter>"_c4l
-inoremap ;k "<..>" : <..>,<esc>0f>ca<
-inoremap ;M :vnew \| 0read !
-
-" Node & Javascript
-autocmd BufNewFile,BufRead * if match(getline(1),"node") >= 0 | set filetype=javascript | endif
-autocmd FileType javascript inoremap ;f function <..>(<..>) {<Enter><..><Enter>}<esc>kkt>ca<
-autocmd FileType javascript inoremap ;l for ( var i = 0; i < <..>; i++ ) {<Enter><..><Enter>}<esc>kkt>ca<
-autocmd FileType javascript inoremap ;p console.log(`<..>`);<esc>0/<..><Enter>ca<
-autocmd FileType javascript inoremap ;t <esc>A.then( (<..>) => {<Enter><..><Enter>});<esc>kkt>ca<
-autocmd FileType javascript inoremap ;c <esc>$xA.catch( (err) => {<Enter><..><Enter>});<esc>kt>ca<
-autocmd FileType javascript inoremap ;r const <..> = require("<..>");<esc>0f>ca<
-autocmd FileType javascript inoremap ;R <..> = require("<..>"),<esc>0f>ca<
-autocmd FileType javascript inoremap ;J JSON.stringify(<..>, null, 2)<esc>FJf>ca<
-
-" PYTHON
-autocmd FileType python inoremap ;c class <..>:<Enter>def __init__(self, <..>):<Enter>self.<..> = <..><esc>ggi
-autocmd FileType python inoremap ;f def <..>(<..>):<Enter><..><esc>0kt>ca<
-autocmd FileType python inoremap ;l for i in range(0, <..>):<Enter><..><esc>kt>ca<
-autocmd FileType python inoremap ;p print(f'<..>')<esc>0t>ca<
-autocmd FileType python inoremap ;m def main():<Enter><..><Enter>pass<Enter><esc>I<Enter><Enter>if __name__ == "__main__":<Enter>main()<esc>5k0f>ca<
-
-" C and Cpp
-autocmd BufNewFile,BufRead * if match(getline(1),"*.hpp") >= 0 | set filetype=cpp | endif
-autocmd BufNewFile,BufRead * if match(getline(1),"*.h") >= 0 | set filetype=c | endif
-autocmd FileType c,cpp inoremap ;c #ifndef _<..>_H_<Enter>#define _<..>_H_<Enter><Enter>using namespace std;<Enter><Enter>class <..>:<Enter>{<Enter>public:<Enter><..>()<Enter>private:<Enter>};<Enter>#endif<esc>ggi
-autocmd FileType c,cpp inoremap ;f  <..> <..>(<..>)<Enter>{<Enter><..><Enter>}<esc>kkkcw
-autocmd FileType c,cpp inoremap ;m  int main(int argc, char *argv[])<Enter>{<Enter><..><Enter>}<esc>kwcw
-autocmd FileType c,cpp inoremap ;l  for ( int i = 0; i < <..>; i++ )<Enter>{<Enter><..><Enter>}<esc>kkkt>ca<
-autocmd FileType c,cpp inoremap ;i  #include ""<esc>i
-autocmd FileType c,cpp inoremap ;I  #include <><esc>i
-autocmd FileType cpp inoremap ;p  cout << "<..>" << endl;<esc>0t>ca<
-autocmd FileType c inoremap ;p  printf("<..>\n");<esc>0t>ca<
-
-" Markdown
-autocmd BufNewFile,BufRead * if match(getline(1),"*.md") >= 0 | set filetype=md | endif
-autocmd FileType md inoremap ;e  <esc>:-1read $HOME/.vim/skeletons/skeleton.expand.md<CR>gg/<..><Enter>ca<
-
-" Skeleton Builders
-autocmd FileType c inoremap ;t  <esc>:-1read $HOME/.vim/skeletons/.skeleton.c<CR>gg/<..><Enter>ca<
-autocmd FileType cpp inoremap ;t  <esc>:-1read $HOME/.vim/skeletons/.skeleton.cpp<CR>gg/<..><Enter>ca<
-autocmd FileType cpp inoremap ;ht  <esc>:-1read $HOME/.vim/skeletons/.skeleton.hpp<CR>gg/<..><Enter>ca<
-autocmd FileType html inoremap ;t  <esc>:-1read $HOME/.vim/skeletons/.skeleton.html<CR>gg/<..><Enter>ca<
-
-" Reload from place last closed
-if has("autocmd")
-  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
-    \| exe "normal! g'\"" | endif
-endif
-
-set tags=./tags,tags;$HOME
-
-
-nnoremap C :grep! "\<<cword>\>" . -r<CR>:botright copen<CR>
-
-" adjust pane layout with toggle C-y
-fun! PANEHOR()
-    wincmd t
-    wincmd H
-endfun
-
-fun! PANEVERT()
-    wincmd t
-    wincmd K
-endfun
-
-" Toggle between vertical and horizontal layout
-let g:vert = 0
-fun! PANETOG()
-    if g:vert
-        call PANEVERT()
-        let g:vert=0
-    else
-        call PANEHOR()
-        let g:vert=1
-    endif
-endfun
-nnoremap <C-y> :call PANETOG()<CR>
-
-fun! ALIGN()
-    :execute "normal! mtggvG='tzz"
-endfun
-
-fun! FORMAT()
-    :execute "normal! mtgggqG'tzz"
-endfun
-
-function! s:get_visual_selection()
-    " Why is this not a built-in Vim script function?!
-    let [line_start, column_start] = getpos("'<")[1:2]
-    let [line_end, column_end] = getpos("'>")[1:2]
-    let lines = getline(line_start, line_end)
-    if len(lines) == 0
-        return ''
-    endif
-    let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
-    let lines[0] = lines[0][column_start - 1:]
-    return join(lines, "\n")
-endfunction
-
-command AL :call ALIGN()
-command FO :call FORMAT()
-
-if exists('+termguicolors')
-  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-  set termguicolors
-endif
 
 " Neovim 0.5.0 configurations nightly
 " Use <Tab> and <S-Tab> to navigate through popup menu
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-" Set completeopt to have a better completion experience
-set completeopt=menuone,noselect
 
 " Avoid showing message extra message when using completion
 set shortmess+=c
@@ -665,17 +321,14 @@ local nvim_lsp = require('lspconfig')
 
 local on_attach = function(client, bufnr)
 
-
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-
   -- buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
   -- Mappings.
   local opts = { noremap=true, silent=true }
   buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
   buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
   buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
   buf_set_keymap('n', '<leader>k', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
   buf_set_keymap('n', '<leader>wd', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
@@ -713,7 +366,7 @@ end
 
 -- Use a loop to conveniently both setup defined servers
 -- and map buffer local keybindings when the language server attaches
-local servers = {"pyright", "pyls","rust_analyzer", "tsserver" }
+local servers = {"pyright", "pyls", "tsserver" }
 
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -729,6 +382,80 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { capabilities = capabilities, on_attach = on_attach }
 end
+
+-- LUA
+local system_name = "Linux" -- (Linux, macOS, or Windows)
+local sumneko_root_path = '/home/ethan/.linters/lua-language-server'
+local sumneko_binary = sumneko_root_path.."/bin/"..system_name.."/lua-language-server"
+
+require('lspconfig').sumneko_lua.setup({
+  cmd = {sumneko_binary, "-E", sumneko_root_path .. "/main.lua"};
+  -- An example of settings for an LSP server.
+  --    For more options, see nvim-lspconfig
+  settings = {
+    Lua = {
+      runtime = {
+        -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+        version = 'LuaJIT',
+        -- Setup your lua path
+        path = vim.split(package.path, ';'),
+      },
+      diagnostics = {
+        -- Get the language server to recognize the `vim` global
+        globals = {'vim'},
+      },
+      workspace = {
+        -- Make the server aware of Neovim runtime files
+        library = {
+          [vim.fn.expand('$VIMRUNTIME/lua')] = true,
+          [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true,
+        },
+      },
+    }
+  },
+
+  on_attach = on_attach
+})
+
+-- RUST
+nvim_lsp.rust_analyzer.setup({
+    on_attach=on_attach,
+    cmd = { "rust-analyzer" },
+    filetypes = { "rust" },
+    settings = {
+        ["rust-analyzer"] = {
+            assist = {
+                importMergeBehavior = "last",
+                importPrefix = "by_self",
+            },
+            cargo = {
+                loadOutDirsFromCheck = true
+            },
+            procMacro = {
+                enable = true
+            },
+        }
+    }
+})
+
+-- SWIFT
+local lspconfig = require'lspconfig'
+local configs = require'lspconfig/configs'
+
+if not configs.sourcekit_lsp then
+    configs.sourcekit_lsp = {
+        default_config = {
+            cmd = {'/home/ethan/swift-5.3.3-RELEASE-ubuntu20.04/usr/bin/sourcekit-lsp'};
+            filetypes = {'swift'};
+            settings = {};
+            root_dir = function(fname)
+              return lspconfig.util.find_git_ancestor(fname) or vim.loop.os_homedir()
+            end;
+        };
+    }
+end
+
+lspconfig.sourcekit_lsp.setup{on_attach = on_attach}
 EOF
 
 " Telescope Configuration
@@ -784,7 +511,7 @@ require'compe'.setup {
   min_length = 1;
   preselect = 'enable';
   throttle_time = 80;
-  source_timeout = 200;
+  source_timeout = 500;
   incomplete_delay = 400;
   max_abbr_width = 100;
   max_kind_width = 100;
@@ -801,13 +528,10 @@ require'compe'.setup {
   };
 }
 EOF
+highlight link CompeDocumentation NormalFloat
 
 lua << EOF
 require('lspkind').init({with_text = true})
-EOF
-
-lua << EOF
-require'lsp_signature'.on_attach()
 EOF
 
 lua << EOF
@@ -828,18 +552,13 @@ dap.configurations.python = {
     end;
   },
 }
-
 EOF
 
 lua require('dap-python').setup('/usr/bin/python3')
 lua require('dap-python').test_runner = 'pytest'
 
 lua << EOF
-  require("trouble").setup {
-    -- your configuration comes here
-    -- or leave it empty to use the default settings
-    -- refer to the configuration section below
-  }
+require("trouble").setup {}
 EOF
 
 lua << EOF
@@ -848,6 +567,7 @@ saga.init_lsp_saga({
     error_sign = '',
     warn_sign = '',
     hint_sign = '',
+    border_style = "double"
 })
 EOF
 
@@ -859,3 +579,117 @@ lua << EOF
 local neogit = require('neogit')
 neogit.setup {}
 EOF
+
+lua << EOF
+local opts = {
+    -- whether to highlight the currently hovered symbol
+    -- disable if your cpu usage is higher than you want it
+    -- or you just hate the highlight
+    -- default: true
+    highlight_hovered_item = true,
+
+    -- whether to show outline guides
+    -- default: true
+    show_guides = true,
+}
+
+require('symbols-outline').setup(opts)
+EOF
+
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  highlight = {
+    enable = true,              -- false will disable the whole extension
+  },
+}
+EOF
+
+lua << EOF
+require("which-key").setup {
+  plugins = {
+    marks = true, -- shows a list of your marks on ' and `
+    registers = true, -- shows your registers on " in NORMAL or <C-r> in INSERT mode
+    -- the presets plugin, adds help for a bunch of default keybindings in Neovim
+    -- No actual key bindings are created
+    presets = {
+      operators = false, -- adds help for operators like d, y, ... and registers them for motion / text object completion
+      motions = false, -- adds help for motions
+      text_objects = true, -- help for text objects triggered after entering an operator
+      windows = true, -- default bindings on <c-w>
+      nav = true, -- misc bindings to work with windows
+      z = true, -- bindings for folds, spelling and others prefixed with z
+      g = true, -- bindings for prefixed with g
+    },
+},
+  -- add operators that will trigger motion and text object completion
+  -- to enable all native operators, set the preset / operators plugin above
+  operators = { gc = "Comments" },
+  icons = {
+    breadcrumb = "»", -- symbol used in the command line area that shows your active key combo
+    separator = "➜", -- symbol used between a key and it's label
+    group = "+", -- symbol prepended to a group
+  },
+  window = {
+    border = "none", -- none, single, double, shadow
+    position = "bottom", -- bottom, top
+    margin = { 1, 0, 1, 0 }, -- extra window margin [top, right, bottom, left]
+    padding = { 2, 2, 2, 2 }, -- extra window padding [top, right, bottom, left]
+  },
+  layout = {
+    height = { min = 4, max = 25 }, -- min and max height of the columns
+    width = { min = 20, max = 50 }, -- min and max width of the columns
+    spacing = 3, -- spacing between columns
+  },
+  hidden = { "<silent>", "<cmd>", "<Cmd>", "<CR>", "call", "lua", "^:", "^ "}, -- hide mapping boilerplate
+  show_help = true, -- show help message on the command line when the popup is visible
+  triggers = "auto", -- automatically setup triggers
+  -- triggers = {"<leader>"} -- or specifiy a list manually
+}
+EOF
+
+lua << EOF
+require'lsp_signature'.on_attach()
+EOF
+
+lua << EOF
+require'FTerm'.setup({
+    dimensions  = {
+        height = 0.8,
+        width = 0.8,
+        x = 0.5,
+        y = 0.5
+    },
+    border = 'single' -- or 'double'
+})
+EOF
+
+lua <<EOF
+vim.lsp.handlers['textDocument/hover'] = function(_, method, result)
+  vim.lsp.util.focusable_float(method, function()
+    if not (result and result.contents) then
+      -- return { 'No information available' }
+      return
+    end
+    local markdown_lines = vim.lsp.util.convert_input_to_markdown_lines(result.contents)
+    markdown_lines = vim.lsp.util.trim_empty_lines(markdown_lines)
+    if vim.tbl_isempty(markdown_lines) then
+      -- return { 'No information available' }
+      return
+    end
+    local bufnr, winnr = vim.lsp.util.fancy_floating_markdown(markdown_lines, {
+      pad_left = 1; pad_right = 1;
+    })
+    vim.lsp.util.close_preview_autocmd({"CursorMoved", "BufHidden"}, winnr)
+    return bufnr, winnr
+  end)
+end
+EOF
+
+
+" RUN PROJECT COMMANDS
+" RUST
+autocmd BufNewFile,BufRead *.rs set filetype=rust
+autocmd FileType rust nnoremap <Leader>ru :lua require("FTerm").open()<CR>clear<CR>cargo run --quiet<CR>
+
+nnoremap <Leader>wt :lua require("FTerm").open()<CR>clear<CR>wtr<CR>
