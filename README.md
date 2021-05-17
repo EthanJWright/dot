@@ -76,11 +76,20 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 ```
 sudo apt-get install -y ripgrep
-cargo install exa
 
 wget https://github.com/sharkdp/bat/releases/download/v0.18.0/bat-musl_0.18.0_amd64.deb
 sudo dpkg -i bat-musl_0.18.0_amd64.deb
+
+cargo install procs
+cargo install bandwhich
+cargo install tectonic
+cargo install exa
+cargo install rm-improved
+cargo install tealdeer
+cargo install du-dust
+cargo install watchexec-cli
 ```
+
 
 ## Font Requirements
 

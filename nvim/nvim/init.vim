@@ -47,15 +47,12 @@ Plug 'nvim-lua/popup.nvim'
 Plug 'alexaandru/nvim-lspupdate'
 Plug 'onsails/lspkind-nvim'
 Plug 'ray-x/lsp_signature.nvim'
+Plug 'folke/lsp-trouble.nvim'
 Plug 'folke/lsp-colors.nvim'
-Plug 'folke/todo-comments.nvim'
+nnoremap <Leader>sd :LspTroubleToggle<CR><C-W><C-K><C-W><C-L>
+
 Plug 'pechorin/any-jump.vim'
 nnoremap <leader>aj :AnyJump<CR>
-
-Plug 'folke/trouble.nvim'
-Plug 'akinsho/nvim-toggleterm.lua'
-Plug 'ethanjwright/toolwindow.nvim'
-" Plug '~/localplug/toolwindow.nvim'
 
 Plug 'glepnir/lspsaga.nvim'
 nnoremap <silent> gh <cmd>lua require'lspsaga.provider'.lsp_finder()<CR>
@@ -83,7 +80,6 @@ Plug 'keith/swift.vim'
 Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
 nnoremap <silent> <leader>dg :DogeGenerate<CR>
 
-
 " Fuzzy Find
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzy-native.nvim'
@@ -104,11 +100,6 @@ nnoremap <silent><leader>ca :Lspsaga code_action<CR>
 vnoremap <silent><leader>ca :<C-U>Lspsaga range_code_action<CR>
 
 Plug 'kyazdani42/nvim-web-devicons'
-Plug 'sentriz/vim-print-debug'
-nnoremap <leader>pd :call print_debug#print_debug()<cr>
-let g:print_debug_templates = {
-\   'python':     'print("==> {}")',
-\ }
 
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
@@ -130,8 +121,9 @@ nnoremap <Leader>tr :NvimTreeToggle<CR><C-W><C-L>
 nnoremap <Leader>tc :NvimTreeToggle<CR> :vertical resize +30<CR><C-W><C-L>
 
 " NvimTree with LSPToggle
-nnoremap <silent> <Leader>ido :NvimTreeOpen<CR>:lua require("toolwindow").open_window("trouble", nil)<CR><C-W><C-K><C-W><C-L>
-nnoremap <silent> <Leader>idc :NvimTreeClose<CR>:lua require("toolwindow").close()<CR>
+nnoremap <silent> <Leader>ido :NvimTreeOpen<CR>:LspTroubleOpen<CR><C-W><C-K><C-W><C-L>
+nnoremap <silent> <Leader>ido :NvimTreeOpen<CR>:LspTroubleOpen<CR><C-W><C-K><C-W><C-L>
+nnoremap <silent> <Leader>idc :NvimTreeClose<CR>:LspTroubleClose<CR>
 let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache' ] "empty by default
 let g:nvim_tree_width_allow_resize  = 1
 
@@ -168,8 +160,6 @@ Plug 'lervag/vimtex'
 let g:tex_flavor = 'latex'
 Plug 'xuhdev/vim-latex-live-preview', {'for': 'tex'}
 
-Plug 'folke/zen-mode.nvim'
-nmap <silent><Leader>zm :ZenMode<CR>
 Plug 'folke/which-key.nvim'
 
 Plug 'majutsushi/tagbar'
@@ -218,6 +208,7 @@ Plug 'tpope/vim-tbone' " tmux bidnings for vim
 
 Plug 'dag/vim-fish'
 Plug 'vimlab/split-term.vim'
+Plug 'akinsho/nvim-toggleterm.lua'
 nmap <Leader>to :ToggleTerm<CR><C-\><C-n><C-W><C-K><C-W><C-L>
 Plug 'numToStr/FTerm.nvim'
 
@@ -638,10 +629,6 @@ require("which-key").setup {
   plugins = {
     marks = true, -- shows a list of your marks on ' and `
     registers = true, -- shows your registers on " in NORMAL or <C-r> in INSERT mode
-    spelling = {
-      enabled = true, -- enabling this will show WhichKey when pressing z= to select spelling suggestions
-      suggestions = 20, -- how many suggestions should be shown in the list?
-    },
     -- the presets plugin, adds help for a bunch of default keybindings in Neovim
     -- No actual key bindings are created
     presets = {
@@ -678,22 +665,6 @@ require("which-key").setup {
   triggers = "auto", -- automatically setup triggers
   -- triggers = {"<leader>"} -- or specifiy a list manually
 }
-EOF
-
-lua << EOF
-require("todo-comments").setup {
--- your configuration comes here
--- or leave it empty to use the default settings
--- refer to the configuration section below
-}
-EOF
-
-lua << EOF
-  require("zen-mode").setup {
-    -- your configuration comes here
-    -- or leave it empty to use the default settings
-    -- refer to the configuration section below
-  }
 EOF
 
 lua << EOF
@@ -739,18 +710,9 @@ EOF
 " RUST
 autocmd BufNewFile,BufRead *.rs set filetype=rust
 autocmd FileType rust nnoremap <Leader>ru :lua require("FTerm").open()<CR>clear<CR>cargo run --quiet<CR>
-autocmd FileType rust nnoremap <Leader>bl :lua require("toolwindow").open_window("autobuild", {filetype = "rs", cmd = "cargo run"})<CR><C-\><C-n>G<C-W><C-K><C-W><C-L>
+autocmd FileType rust nnoremap <Leader>li :TermExec cmd='watchexec --clear -e rs "clear ; cargo run"'<CR>
 
 
 " PYTHON
 autocmd FileType python nnoremap <Leader>ru :lua require("FTerm").open()<CR>clear<CR>pytest -W ignore::DeprecationWarning<CR>
-
-" --- Bottom Tool Window Mappings
-autocmd FileType python nnoremap <Leader>bl :lua require("toolwindow").open_window("autobuild", {filetype = "py", cmd = "pytest -W ignore::DeprecationWarning"})<CR><C-\><C-n>G<C-W><C-K><C-W><C-L>
-
-nmap <silent><Leader>bc :lua require("toolwindow").close()<CR>
-nmap <silent><Leader>bd :lua require("toolwindow").open_window("trouble", nil)<CR><C-W><C-K><C-W><C-L>
-nmap <silent><Leader>bt :lua require("toolwindow").open_window("term", nil)<CR>
-nmap <silent><Leader>bq :lua require("toolwindow").open_window("quickfix", nil)<CR>
-
-nmap <silent><Leader>bn :lua require("toolwindow").open_window("todo", nil)<CR>
+autocmd FileType python nnoremap <Leader>li :TermExec cmd='watchexec --clear -e py "clear ; pytest -W ignore::DeprecationWarning"'<CR>
